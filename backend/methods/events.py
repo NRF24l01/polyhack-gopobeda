@@ -43,11 +43,11 @@ def get_events_methods(query):
     if query.format is not None:
         query_db = query_db.filter(Events.format == query.format)
 
-    if query.dateFrom is not None:
-        query_db = query_db.filter(Events.start_date >= query.dateFrom)
+    if query.date_from is not None:
+        query_db = query_db.filter(Events.start_date >= query.date_from)
 
-    if query.dateTo is not None:
-        query_db = query_db.filter(Events.end_date <= query.dateTo)
+    if query.date_to is not None:
+        query_db = query_db.filter(Events.end_date <= query.date_to)
 
     if query.status is not None:
         query_db = query_db.filter(Events.status == query.status)

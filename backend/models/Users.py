@@ -16,6 +16,5 @@ class Users(db.Model):
         return {
             "user_id": self.user_id,
             "username": self.username,
-            "email": self.email,
-            "is_organizer": self.is_organizer
+            "email": self.email
         }
