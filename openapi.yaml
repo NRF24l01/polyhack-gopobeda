@@ -100,6 +100,7 @@ paths:
         - $ref: '#/components/parameters/dateTo'
         - $ref: '#/components/parameters/limit'
         - $ref: '#/components/parameters/offset'
+
       responses:
         '200':
           description: Список мероприятий
@@ -137,7 +138,7 @@ paths:
         '413':
           $ref: '#/components/responses/FileTooLargeError'
 
-  /events/drafts:
+  /organizer/events/drafts:
     get:
       tags: [Мероприятия]
       summary: Получить черновики мероприятий
@@ -158,7 +159,7 @@ paths:
         '403':
           $ref: '#/components/responses/ForbiddenError'
 
-  /events/saved:
+  /user/events/saved:
     get:
       tags: [Мероприятия]
       summary: Получить отложенные мероприятия
@@ -177,7 +178,7 @@ paths:
         '401':
           $ref: '#/components/responses/UnauthorizedError'
 
-  /events/participating:
+  /user/events/participating:
     get:
       tags: [Мероприятия]
       summary: Мероприятия, в которых участвует пользователь
@@ -199,7 +200,7 @@ paths:
   # ======================
   # Личный кабинет организатора
   # ======================
-  /organizer/dashboard:
+  /organizer/events:
     get:
       tags: [Организатор]
       summary: Статистика мероприятий организатора
@@ -236,6 +237,72 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/EventStats'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /organizer/events/{eventId}/moderate:
+    post:
+      tags: [ Организатор ]
+      summary: Отправка созданного мероприятия на модерацию
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: успешно отправлено
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /user/events/{event_id}/like:
+    post:
+      tags: [ Пользователь ]
+      summary: Добавление мероприятия в избранные
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ок
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+  /user/events/{event_id}/participating:
+    post:
+      tags: [ Пользователь ]
+      summary: Добавление мероприятия в избранные
+      security:
+        - bearerAuth: [ ]
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: ок
         '401':
           $ref: '#/components/responses/UnauthorizedError'
         '403':
@@ -285,22 +352,22 @@ components:
     AuthResponse:
       type: object
       properties:
-        token:
+        jwt:
           type: string
 
     CreateEventRequest:
       type: object
-      required: [title, type, startDate, format]
+      required: [title, type, start_date, format, end_date, image, description, registration_url]
       properties:
         title:
           type: string
         type:
           type: string
           enum: [hackathon, meetup, conference, workshop]
-        startDate:
+        start_date:
           type: string
           format: date-time
-        endDate:
+        end_date:
           type: string
           format: date-time
         image:
@@ -308,49 +375,46 @@ components:
           format: binary
         description:
           type: string
-        registrationUrl:
+        registration_url:
           type: string
           format: uri
         format:
           type: string
           enum: [online, offline, hybrid]
-        status:
-          type: string
-          default: "draft"
 
     Event:
       type: object
       properties:
-        id:
+        event_id:
           type: string
         title:
           type: string
         type:
           type: string
-        startDate:
-          type: string
-          format: date-time
-        endDate:
-          type: string
-          format: date-time
-        imageUrl:
+        start_date:
+          type: integer
+        end_date:
+          type: integer
+        image_url:
           type: string
         description:
           type: string
-        registrationUrl:
+        registration_url:
           type: string
         format:
           type: string
         organizer:
           type: object
           properties:
-            id:
+            user_id:
               type: string
-            name:
+            username:
+              type: string
+            email:
               type: string
         status:
           type: string
-          enum: [draft, published, archived]
+          enum: [draft, published, moderate]
 
     PaginatedEvents:
       type: object
@@ -359,56 +423,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Event'
-        total:
-          type: integer
-        page:
-          type: integer
-        pageSize:
-          type: integer
 
     OrganizerDashboard:
       type: object
       properties:
-        totalEvents:
-          type: integer
-        upcomingEvents:
-          type: integer
-        pastEvents:
-          type: integer
-        totalParticipants:
-          type: integer
         events:
           type: array
           items:
-            type: object
-            properties:
-              id:
-                type: string
-              title:
-                type: string
-              views:
-                type: integer
-              participants:
-                type: integer
-              status:
-                type: string
+            $ref: '#/components/schemas/Event'
 
     EventStats:
       type: object
       properties:
         views:
           type: integer
-        uniqueViews:
-          type: integer
         likes:
           type: integer
         participants:
           type: integer
-        registrationConversion:
+        conversion:
           type: number
           format: float
-        popularTime:
-          type: string
 
   parameters:
     type:
@@ -429,15 +464,15 @@ components:
       name: dateFrom
       in: query
       schema:
-        type: string
-        format: date-time
+        type: integer
+        example: 1743201388
 
     dateTo:
       name: dateTo
       in: query
       schema:
-        type: string
-        format: date-time
+        type: integer
+        example: 1743201489
 
     limit:
       name: limit

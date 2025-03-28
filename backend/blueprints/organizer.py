@@ -9,7 +9,7 @@ from schemas import *
 organizer = Blueprint('organizer', __name__)
 
 
-@organizer.route("events/drafts", methods=['GET'])
+@organizer.route("/events/drafts", methods=['GET'])
 @creates_response
 @jwt_required()
 @check_jwt_access
@@ -52,6 +52,8 @@ def get_organizer_event_stats(event_id):
 @check_jwt_access
 def moderate_event(event_id):
     event = Events.query.filter_by(event_id=event_id).first()
+    if event is None:
+        raise BadRequest('Event not found')
     event.status = 'moderate'
 
     db.session.commit()
