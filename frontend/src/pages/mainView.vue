@@ -1,10 +1,8 @@
 <template>
   <div class="min-h-screen bg-white">
-    <Header />
     <Hero />
     <EventsList />
   </div>
-  <Footer />
 </template>
 
 <script>
