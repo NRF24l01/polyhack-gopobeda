@@ -1,6 +1,7 @@
 from pydantic import BaseModel, HttpUrl, Field
 from typing import Literal
 
+
 class CreateEventsRequest(BaseModel):
     title: str = Field(..., min_length=1)
     type: Literal["hackathon", "meetup", "conference", "workshop"] = Field(...)
@@ -10,5 +11,4 @@ class CreateEventsRequest(BaseModel):
     description: str = Field(...)
     registration_url: HttpUrl = Field(...)
     format: Literal["online", "offline", "hybrid"] = Field(...)
-    status: Literal["draft", "published"] = Field(...)
 

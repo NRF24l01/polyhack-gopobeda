@@ -23,6 +23,7 @@ class Events(db.Model):
 
     liked = db.relationship("EventLiked", backref="event", uselist=True)
     participating = db.relationship("EventParticipating", backref="event", uselist=True)
+    stats = db.relationship("EventStats", backref="event", uselist=False)
 
     def as_dict(self):
         return {
