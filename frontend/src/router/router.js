@@ -4,9 +4,9 @@ import authOrg from "@/pages/authOrg.vue";
 import authCli from "@/pages/authCli.vue";
 import regCli from "@/pages/regCli.vue";
 import regOrg from "@/pages/regOrg.vue";
-import CreateEvent from "@/pages/CreateEvent.vue";
-import EventDetails from "@/pages/EventDetails.vue";
-import FavoriteEvents from "@/pages/FavoriteEvents.vue";
+import createEvent from "@/pages/createEvent.vue";
+import eventDetails from "@/pages/eventDetails.vue";
+import favoriteEvents from "@/pages/favoriteEvents.vue";
 
 const routes = [
     {
@@ -31,16 +31,16 @@ const routes = [
     },
     {
         path: '/events/create',
-        component: CreateEvent
+        component: createEvent
     },
     {
         path: '/events/:id',
-        component: EventDetails,
+        component: eventDetails,
         props: true
     },
     {
         path: '/favorites',
-        component: FavoriteEvents
+        component: favoriteEvents
     }
 ]
 
