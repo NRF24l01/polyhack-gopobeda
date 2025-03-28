@@ -1,7 +1,6 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required
 from schemas import *
-from flask import jsonify
 from flask_pydantic import validate
 from werkzeug.security import generate_password_hash, check_password_hash
 from helpers import *
