@@ -18,6 +18,5 @@ app.config['SQLALCHEMY_DATABASE_URI'] = POSTGRES_CONN
 migrate = Migrate(app, db)
 db.init_app(app)
 
-# redis_client = StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=0)
 
 jwt = JWTManager(app)
