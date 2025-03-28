@@ -1,12 +1,16 @@
+<script setup>
+import NewIvent from '../components/NewIvent.vue';
+</script>
+
 <template>
   <div class="min-h-screen bg-white">
     <Hero />
     <EventsList />
+    <NewIvent />
   </div>
 </template>
 
 <script>
-
 
 export default {
   name: 'HomePage',
