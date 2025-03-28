@@ -1,0 +1,607 @@
+openapi: 3.0.0
+info:
+  title: Hackathon Platform API
+  version: 1.0.0
+  description: API для платформы проведения хакатонов и мероприятий
+
+servers:
+  - url:  https://api.hackathon-platform.com/v1
+    description: Production server
+  - url: http://127.0.0.1:8080
+    description: Testing server
+
+paths:
+  # ======================
+  # Аутентификация
+  # ======================
+  /auth/login:
+    post:
+      tags: [Аутентификация]
+      summary: Вход в систему
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Успешный вход
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/AuthError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /auth/register/user:
+    post:
+      tags: [Регистрация]
+      summary: Регистрация пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterRequest'
+      responses:
+        '201':
+          description: Пользователь зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  /auth/register/organizer:
+    post:
+      tags: [Регистрация]
+      summary: Регистрация организатора
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrganizerRegisterRequest'
+      responses:
+        '201':
+          description: Организатор зарегистрирован
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '409':
+          $ref: '#/components/responses/ConflictError'
+        '429':
+          $ref: '#/components/responses/RateLimitError'
+
+  # ======================
+  # Мероприятия
+  # ======================
+  /events:
+    get:
+      tags: [Мероприятия]
+      summary: Получить список мероприятий
+      parameters:
+        - $ref: '#/components/parameters/type'
+        - $ref: '#/components/parameters/format'
+        - $ref: '#/components/parameters/dateFrom'
+        - $ref: '#/components/parameters/dateTo'
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          description: Список мероприятий
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEvents'
+        '400':
+          $ref: '#/components/responses/QueryParamsError'
+
+    post:
+      tags: [Мероприятия]
+      summary: Создать мероприятие
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEventRequest'
+      responses:
+        '201':
+          description: Мероприятие создано
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '413':
+          $ref: '#/components/responses/FileTooLargeError'
+
+  /events/drafts:
+    get:
+      tags: [Мероприятия]
+      summary: Получить черновики мероприятий
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          description: Список черновиков
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEvents'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /events/saved:
+    get:
+      tags: [Мероприятия]
+      summary: Получить отложенные мероприятия
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          description: Список отложенных мероприятий
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEvents'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  /events/participating:
+    get:
+      tags: [Мероприятия]
+      summary: Мероприятия, в которых участвует пользователь
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/limit'
+        - $ref: '#/components/parameters/offset'
+      responses:
+        '200':
+          description: Список мероприятий
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEvents'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+
+  # ======================
+  # Личный кабинет организатора
+  # ======================
+  /organizer/dashboard:
+    get:
+      tags: [Организатор]
+      summary: Статистика мероприятий организатора
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Статистика
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrganizerDashboard'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+
+  /organizer/events/{eventId}/stats:
+    get:
+      tags: [Организатор]
+      summary: Статистика по конкретному мероприятию
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Статистика мероприятия
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventStats'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+
+components:
+  schemas:
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    UserRegisterRequest:
+      type: object
+      required: [email, password, username]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        username:
+          type: string
+
+    OrganizerRegisterRequest:
+      type: object
+      required: [email, password, username]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        username:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+
+    CreateEventRequest:
+      type: object
+      required: [title, type, startDate, format]
+      properties:
+        title:
+          type: string
+        type:
+          type: string
+          enum: [hackathon, meetup, conference, workshop]
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        image:
+          type: string
+          format: binary
+        description:
+          type: string
+        registrationUrl:
+          type: string
+          format: uri
+        format:
+          type: string
+          enum: [online, offline, hybrid]
+        status:
+          type: string
+          default: "draft"
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        type:
+          type: string
+        startDate:
+          type: string
+          format: date-time
+        endDate:
+          type: string
+          format: date-time
+        imageUrl:
+          type: string
+        description:
+          type: string
+        registrationUrl:
+          type: string
+        format:
+          type: string
+        organizer:
+          type: object
+          properties:
+            id:
+              type: string
+            name:
+              type: string
+        status:
+          type: string
+          enum: [draft, published, archived]
+
+    PaginatedEvents:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+        total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+
+    OrganizerDashboard:
+      type: object
+      properties:
+        totalEvents:
+          type: integer
+        upcomingEvents:
+          type: integer
+        pastEvents:
+          type: integer
+        totalParticipants:
+          type: integer
+        events:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: string
+              title:
+                type: string
+              views:
+                type: integer
+              participants:
+                type: integer
+              status:
+                type: string
+
+    EventStats:
+      type: object
+      properties:
+        views:
+          type: integer
+        uniqueViews:
+          type: integer
+        likes:
+          type: integer
+        participants:
+          type: integer
+        registrationConversion:
+          type: number
+          format: float
+        popularTime:
+          type: string
+
+  parameters:
+    type:
+      name: type
+      in: query
+      schema:
+        type: string
+        enum: [hackathon, meetup, conference, workshop]
+
+    format:
+      name: format
+      in: query
+      schema:
+        type: string
+        enum: [online, offline, hybrid]
+
+    dateFrom:
+      name: dateFrom
+      in: query
+      schema:
+        type: string
+        format: date-time
+
+    dateTo:
+      name: dateTo
+      in: query
+      schema:
+        type: string
+        format: date-time
+
+    limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 10
+
+    offset:
+      name: offset
+      in: query
+      schema:
+        type: integer
+        default: 0
+
+  responses:
+    ValidationError:
+      description: Невалидные данные
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "validation_error"
+              message:
+                type: string
+                example: "Invalid request data"
+
+    AuthError:
+      description: Неверные учетные данные
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "authentication_failed"
+              message:
+                type: string
+                example: "Invalid email or password"
+
+    UnauthorizedError:
+      description: Не авторизован
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "unauthorized"
+              message:
+                type: string
+                example: "Authentication required"
+
+    ForbiddenError:
+      description: Нет прав
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "forbidden"
+              message:
+                type: string
+                example: "Insufficient permissions"
+
+    ConflictError:
+      description: Конфликт
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "conflict"
+              message:
+                type: string
+                example: "User already exists"
+
+    NotFoundError:
+      description: Не найдено
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "not_found"
+              message:
+                type: string
+                example: "Event not found"
+
+    RateLimitError:
+      description: Слишком много запросов
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "rate_limit_exceeded"
+              message:
+                type: string
+                example: "Too many requests"
+              retryAfter:
+                type: integer
+                example: 60
+
+    ServerError:
+      description: Внутренняя ошибка сервера
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "server_error"
+              message:
+                type: string
+                example: "Internal server error"
+
+    QueryParamsError:
+      description: Неверные параметры запроса
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "invalid_query_params"
+              message:
+                type: string
+                example: "Invalid date format"
+
+    FileTooLargeError:
+      description: Слишком большой файл
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              error:
+                type: string
+                example: "file_too_large"
+              message:
+                type: string
+                example: "Image exceeds maximum size"
+              maxSize:
+                type: integer
+                example: 5242880
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
