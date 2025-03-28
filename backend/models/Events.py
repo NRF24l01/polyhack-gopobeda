@@ -15,14 +15,16 @@ class Events(db.Model):
     description = db.Column(db.Text)
     registration_url = db.Column(db.String(600))
 
-    format = db.Column(db.String, nullable=False)
-    status = db.Column(db.String, nullable=False)
+    format = db.Column(db.String(100), nullable=False)
+    place = db.Column(db.String(500), nullable=False)
+    status = db.Column(db.String(50), nullable=False)
 
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey(Users.user_id, ondelete="CASCADE"))
     organizer = db.relationship('Users', foreign_keys=[user_id], backref='events')
 
     liked = db.relationship("EventLiked", backref="event", uselist=True)
     participating = db.relationship("EventParticipating", backref="event", uselist=True)
+    stats = db.relationship("EventStats", backref="event", uselist=False)
 
     def as_dict(self):
         return {

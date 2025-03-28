@@ -7,9 +7,9 @@ def check_jwt_access(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         current_user = get_jwt()
-        if current_user["access"] == "organize":
+        if current_user["access"] == "organizer":
             return func(*args, **kwargs)
-        raise Forbidden("cannot access organize")
+        raise Forbidden("cannot access organizer")
 
     wrapper.__name__ = func.__name__
     return wrapper

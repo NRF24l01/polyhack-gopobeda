@@ -44,3 +44,16 @@ def get_organizer_event_stats(event_id):
         raise BadRequest('Event not found')
 
     return jsonify(event.as_dict()), 200
+
+
+@organizer.route('/events/{event_id}/moderate', methods=['POST'])
+@creates_response
+@jwt_required()
+@check_jwt_access
+def moderate_event(event_id):
+    event = Events.query.filter_by(event_id=event_id).first()
+    event.status = 'moderate'
+
+    db.session.commit()
+
+    return jsonify({"message": "send to moderate"}), 200

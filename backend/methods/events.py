@@ -7,6 +7,7 @@ from config import UPLOADFLOADER
 import string
 import random
 from flask import url_for
+from werkzeug.exceptions import NotFound
 
 
 def base64_to_link(base64name):
@@ -68,10 +69,17 @@ def create_events_method(body):
         description=body.description,
         registration_url=body.registration_url,
         format=body.format,
-        status=body.status
+        status="draft"
     )
 
     db.add(new_event)
     db.commit()
 
     return new_event.as_dict()
+
+
+def get_event_by_event_id(event_id):
+    event = Events.query.filter_by(event_id=event_id).first()
+    if event is None:
+        raise NotFound("Event not found")
+    return event

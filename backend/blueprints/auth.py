@@ -24,8 +24,13 @@ def login():
     if not user or not check_password_hash(user.password_hash, password):
         return jsonify({'message': 'Неверный логин или пароль'}), 401
 
+    if user.is_organizer:
+        access = "organizer"
+    else:
+        access = "user"
+
     access_token = create_access_token(identity=user.user_id,
-                                       additional_claims={"user_id": user.user_id, "access": "user"})
+                                       additional_claims={"user_id": user.user_id, "access": access})
 
     return jsonify({"jwt": access_token}), 200
 
@@ -36,7 +41,10 @@ def login():
 def create_user(body: CreateUserRequest):
     user = create_user_method(body, False)
 
-    return jsonify(user.as_dict()), 201
+    access_token = create_access_token(identity=user.user_id,
+                                       additional_claims={"user_id": user.user_id, "access": "user"})
+
+    return jsonify({"jwt": access_token}), 201
 
 
 @auth.route("/register/organizer", methods=['POST'])
@@ -45,4 +53,7 @@ def create_user(body: CreateUserRequest):
 def create_organizer(body: CreateUserRequest):
     user = create_user_method(body, True)
 
-    return jsonify(user.as_dict()), 201
+    access_token = create_access_token(identity=user.user_id,
+                                       additional_claims={"user_id": user.user_id, "access": "organizer"})
+
+    return jsonify({"jwt": access_token}), 201
