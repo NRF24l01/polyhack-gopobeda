@@ -11,6 +11,19 @@
         
         <nav class="hidden md:flex space-x-8">
           <router-link 
+            to="/" 
+            class="text-gray-700 hover:text-gray-900"
+          >
+            Главная
+          </router-link>
+          <router-link 
+            to="/favorites" 
+            class="text-gray-700 hover:text-gray-900 flex items-center"
+          >
+            <span class="mr-1">❤️</span>
+            Избранное
+          </router-link>
+          <router-link 
             v-for="(link, index) in navLinks" 
             :key="index"
             :to="link.path"

@@ -1,10 +1,10 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
     <div class="flex justify-between items-center mb-8">
-      <h2 class="text-2xl font-bold slide-up">Популярные события</h2>
+      <h2 class="text-2xl font-bold">Популярные события</h2>
       <router-link 
         to="/events"
-        class="text-purple-600 hover:text-purple-700 transition-colors"
+        class="text-purple-600 hover:text-purple-700"
       >
         Смотреть все
       </router-link>
@@ -15,7 +15,7 @@
         v-model="searchQuery"
         type="text"
         placeholder="Поиск событий..."
-        class="w-full px-4 py-2 border border-gray-300 rounded-md transition-all focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+        class="w-full px-4 py-2 border border-gray-300 rounded-md"
       />
     </div>
 
@@ -24,9 +24,9 @@
         v-for="category in categories"
         :key="category"
         :class="[
-          'px-4 py-2 rounded-md whitespace-nowrap transition-all duration-300',
+          'px-4 py-2 rounded-md whitespace-nowrap',
           selectedCategory === category 
-            ? 'bg-purple-600 text-white transform scale-105' 
+            ? 'bg-purple-600 text-white' 
             : 'bg-gray-100 hover:bg-gray-200'
         ]"
         @click="selectCategory(category)"
@@ -35,30 +35,63 @@
       </button>
     </div>
 
-    <transition-group 
-      name="fade"
-      tag="div"
-      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-    >
-      <EventCard
-        v-for="event in filteredEvents"
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div 
+        v-for="event in filteredEvents" 
         :key="event.id"
-        v-bind="event"
-        @click="goToEventDetails(event)"
-        class="hover-scale"
-      />
-    </transition-group>
+        class="bg-white rounded-lg shadow overflow-hidden cursor-pointer hover:shadow-lg transition-shadow"
+        @click="$router.push(`/events/${event.id}`)"
+      >
+        <img :src="event.image" :alt="event.title" class="w-full h-48 object-cover" />
+        <div class="p-4">
+          <div class="flex justify-between items-start mb-2">
+            <span class="inline-block px-2 py-1 text-sm text-purple-600 bg-purple-100 rounded-md">
+              {{ event.type }}
+            </span>
+            <button 
+              @click.stop="toggleFavorite(event)"
+              class="transition-transform hover:scale-110"
+              :class="{ 'text-red-500': isFavorite(event.id) }"
+            >
+              {{ isFavorite(event.id) ? '❤️' : '🤍' }}
+            </button>
+          </div>
+          <h3 class="text-xl font-semibold mb-2">{{ event.title }}</h3>
+          <p class="text-gray-600 mb-4 line-clamp-2">{{ event.description }}</p>
+          
+          <div class="flex items-center text-sm text-gray-500 mb-2">
+            <span class="mr-2">📅</span>
+            {{ event.date }}
+          </div>
+          
+          <div class="flex items-center text-sm text-gray-500 mb-2">
+            <span class="mr-2">📍</span>
+            {{ event.location }}
+          </div>
+          
+          <div class="flex items-center text-sm text-gray-500">
+            <span class="mr-2">👤</span>
+            {{ event.organizer }}
+          </div>
+
+          <button 
+            class="w-full mt-4 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700"
+            @click.stop="$router.push(`/events/${event.id}`)"
+          >
+            Подробнее
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import EventCard from './EventCard.vue'
+import { favoritesMixin } from '@/mixins/favoritesMixin'
 
 export default {
   name: 'EventsList',
-  components: {
-    EventCard
-  },
+  mixins: [favoritesMixin],
   data() {
     return {
       searchQuery: '',
@@ -111,13 +144,16 @@ export default {
   methods: {
     selectCategory(category) {
       this.selectedCategory = this.selectedCategory === category ? '' : category
-    },
-    goToEventDetails(event) {
-      this.$router.push(`/events/${event.id}`)
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 </style> 
