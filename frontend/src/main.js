@@ -2,7 +2,7 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import router from "@/router/router";
-import components from '@/components';
+import components from './components/index.js';
 import mitt from 'mitt'
 
 const emitter = mitt()
