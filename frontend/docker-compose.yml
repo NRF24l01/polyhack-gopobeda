@@ -7,7 +7,7 @@ services:
 
   watchtower:
     image: containrrr/watchtower
-    container_name: watchtower
+    container_name: watchtower-frontend
     restart: unless-stopped
     environment:
       - WATCHTOWER_CLEANUP=true
