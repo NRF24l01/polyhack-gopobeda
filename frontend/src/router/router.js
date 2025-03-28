@@ -6,7 +6,7 @@ import regCli from "@/pages/regCli.vue";
 import regOrg from "@/pages/regOrg.vue";
 import createEvent from "@/pages/createEvent.vue";
 import eventDetails from "@/pages/eventDetails.vue";
-import favoriteEvents from "@/pages/favoriteEvents.vue";
+import FavoriteEvents from "@/pages/FavoriteEvents.vue";
 
 const routes = [
     {
@@ -40,7 +40,7 @@ const routes = [
     },
     {
         path: '/favorites',
-        component: favoriteEvents
+        component: FavoriteEvents
     }
 ]
 
