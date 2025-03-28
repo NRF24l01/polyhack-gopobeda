@@ -9,6 +9,9 @@ class Users(db.Model):
     password_hash = db.Column(db.String(300), nullable=False)
     is_organizer = db.Column(db.Boolean, nullable=False)
 
+    liked = db.relationship("EventLiked", backref="user", uselist=True)
+    participating = db.relationship("EventParticipating", backref="user", uselist=True)
+
     def as_dict(self):
         return {
             "user_id": self.user_id,

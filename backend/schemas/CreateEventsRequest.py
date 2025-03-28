@@ -10,5 +10,5 @@ class CreateEventsRequest(BaseModel):
     description: str = Field(...)
     registration_url: HttpUrl = Field(...)
     format: Literal["online", "offline", "hybrid"] = Field(...)
-    status: Literal["draft", "published", "archived"] = Field(...)
+    status: Literal["draft", "published"] = Field(...)
 
