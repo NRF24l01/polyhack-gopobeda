@@ -21,6 +21,9 @@ class Events(db.Model):
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey(Users.user_id, ondelete="CASCADE"))
     organizer = db.relationship('Users', foreign_keys=[user_id], backref='events')
 
+    liked = db.relationship("EventLiked", backref="event", uselist=True)
+    participating = db.relationship("EventParticipating", backref="event", uselist=True)
+
     def as_dict(self):
         return {
             'event_id': self.event_id,

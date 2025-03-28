@@ -1,10 +1,12 @@
 from manage import app, db
 from flask import abort, send_from_directory, jsonify
 from config import UPLOADFLOADER, SERVER_HOST, SERVER_PORT
-from blueprints import auth, events
+from blueprints import auth, events, organizer, user
 
 app.register_blueprint(auth, url_prefix='/auth')
 app.register_blueprint(events, url_prefix='/events')
+app.register_blueprint(organizer, url_prefix='/organizer')
+app.register_blueprint(user, url_prefix='/user')
 
 
 @app.route('/ping')

@@ -1,4 +1,36 @@
 from models import db, Events
+import base64
+from PIL import Image
+import os
+import io
+from config import UPLOADFLOADER
+import string
+import random
+from flask import url_for
+
+
+def base64_to_link(base64name):
+    if not base64name.startswith("data:image/"):
+        raise ValueError("Некорректный формат base64 (ожидается data:image/...)")
+
+    base64_data = base64name.split(",")[1]
+    image_data = base64.b64decode(base64_data)
+    image = Image.open(io.BytesIO(image_data))
+    os.makedirs(UPLOADFLOADER, exist_ok=True)
+    file_extension = base64name.split(";")[0].split("/")[-1]
+    characters = string.ascii_letters + string.digits
+    filename = ''.join(random.choices(characters, k=30))
+
+    file_path = os.path.join(UPLOADFLOADER, f"{filename}.{file_extension}")
+
+    if file_extension == 'gif':
+        image.save(file_path, save_all=True)
+    else:
+        image.save(file_path)
+
+    path = url_for('serve_image', filename=f"{filename}.{file_extension}", _external=True)
+
+    return str(path)
 
 
 def get_events_methods(query):
@@ -16,19 +48,23 @@ def get_events_methods(query):
     if query.dateTo is not None:
         query_db = query_db.filter(Events.end_date <= query.dateTo)
 
+    if query.status is not None:
+        query_db = query_db.filter(Events.status == query.status)
+
     events = query_db.limit(query.limit).offset(query.offset).all()
-    events = [event.as_dict() for event in events]
 
     return events
 
 
 def create_events_method(body):
+    link = base64_to_link(body.image)
+
     new_event = Events(
         title=body.title,
         type=body.type,
         start_date=body.start_date,
         end_date=body.end_date,
-        image=body.image,
+        image=link,
         description=body.description,
         registration_url=body.registration_url,
         format=body.format,
