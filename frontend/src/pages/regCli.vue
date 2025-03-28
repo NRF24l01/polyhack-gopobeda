@@ -11,7 +11,7 @@
 
       <div class="mb-4">
         <label class="block text-gray-500 text-sm mb-1">Login</label>
-        <input v-model="regCli.login" type="text" :class="{'border-red-500': loginError}" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Введите ваш логин" />
+        <input v-model="regCli.username" type="text" :class="{'border-red-500': loginError}" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Введите ваш логин" />
         <p v-if="loginError" class="text-red-500 text-sm mt-1">{{ loginError }}</p>
       </div>
 
@@ -23,7 +23,7 @@
 
       <button @click="register" class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition">Зарегистрироваться</button>
 
-      <p class="text-center text-gray-600 mt-4">Есть аккаунт? <span @click="$router.push('/auth/Organisation')" class="text-blue-500 hover:text-blue-600 cursor-pointer">Зарегистрироваться</span></p>
+      <p class="text-center text-gray-600 mt-4">Есть аккаунт? <span @click="$router.push('/auth/client')" class="text-blue-500 hover:text-blue-600 cursor-pointer">Зарегистрироваться</span></p>
     </div>
   </div>
 </template>
@@ -34,7 +34,7 @@ export default {
     return {
       regCli: {
         email: '',
-        login: '',
+        username: '',
         password: '',
       },
       emailError: '',
@@ -44,9 +44,9 @@ export default {
   },
   methods: {
     validateForm() {
-      this.emailError = this.email.includes('@') ? '' : 'Введите корректный email';
-      this.loginError = this.login.trim() ? '' : 'Логин не может быть пустым';
-      this.passwordError = this.password.length >= 6 ? '' : 'Пароль должен содержать минимум 6 символов';
+      this.emailError = this.regCli.email.includes('@') ? '' : 'Введите корректный email';
+      this.loginError = this.regCli.username.trim() ? '' : 'Логин не может быть пустым';
+      this.passwordError = this.regCli.password.length >= 6 ? '' : 'Пароль должен содержать минимум 6 символов';
 
       return !this.emailError && !this.loginError && !this.passwordError;
     },
@@ -54,7 +54,7 @@ export default {
       if (!this.validateForm()) return;
 
       try {
-        const response = await fetch('http://127.0.0.1:8080/', {
+        const response = await fetch('http://127.0.0.1:8080/auth/register/user', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'

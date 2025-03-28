@@ -11,7 +11,7 @@
 
       <div class="mb-4">
         <label class="block text-gray-500 text-sm mb-1">Login</label>
-        <input v-model="regOrg.login" type="text" :class="{'border-red-500': loginError}" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Введите ваш логин" />
+        <input v-model="regOrg.username" type="text" :class="{'border-red-500': loginError}" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Введите ваш логин" />
         <p v-if="loginError" class="text-red-500 text-sm mt-1">{{ loginError }}</p>
       </div>
 
@@ -34,7 +34,7 @@ export default {
     return {
       regOrg: {
         email: '',
-        login: '',
+        username: '',
         password: '',
       },
       emailError: '',
@@ -44,9 +44,9 @@ export default {
   },
   methods: {
     validateForm() {
-      this.emailError = this.email.includes('@') ? '' : 'Введите корректный email';
-      this.loginError = this.login.trim() ? '' : 'Логин не может быть пустым';
-      this.passwordError = this.password.length >= 6 ? '' : 'Пароль должен содержать минимум 6 символов';
+      this.emailError = this.regOrg.email.includes('@') ? '' : 'Введите корректный email';
+      this.loginError = this.regOrg.username.trim() ? '' : 'Логин не может быть пустым';
+      this.passwordError = this.regOrg.password.length >= 6 ? '' : 'Пароль должен содержать минимум 6 символов';
 
       return !this.emailError && !this.loginError && !this.passwordError;
     },

@@ -37,8 +37,8 @@ export default {
   },
   methods: {
     validateForm() {
-      this.emailError = this.email.includes('@') ? '' : 'Введите корректный email';
-      this.passwordError = this.password.length >= 6 ? '' : 'Пароль должен содержать минимум 6 символов';
+      this.emailError = this.authOrg.email.includes('@') ? '' : 'Введите корректный email';
+      this.passwordError = this.authOrg.password.length >= 6 ? '' : 'Пароль должен содержать минимум 6 символов';
 
       return !this.emailError && !this.loginError && !this.passwordError;
     },
@@ -46,7 +46,7 @@ export default {
       if (!this.validateForm()) return;
 
       try {
-        const response = await fetch('http://127.0.0.1:8080/', {
+        const response = await fetch('http://127.0.0.1:8080/auth/login', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
