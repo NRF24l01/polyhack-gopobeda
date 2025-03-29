@@ -2,7 +2,7 @@ from manage import app, db, create_admin_user
 from flask import abort, send_from_directory, jsonify
 from config import UPLOADFLOADER, SERVER_HOST, SERVER_PORT, EMAIL
 from blueprints import auth, events, organizer, user
-from  models import Users
+# from  models import Users
 
 app.register_blueprint(auth, url_prefix='/auth')
 app.register_blueprint(events, url_prefix='/events')
@@ -30,9 +30,9 @@ def serve_image(filename):
 
 
 if __name__ == "__main__":
-    with app.app_context():
-        if not db.session.query(Users).filter_by(email=EMAIL).first():
-            jwt = create_admin_user()
+    # with app.app_context():
+    #     if not db.session.query(Users).filter_by(email=EMAIL).first():
+    #         jwt = create_admin_user()
 
     app.run(host=SERVER_HOST, port=SERVER_PORT, debug=True)
 
