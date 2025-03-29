@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import os
 
-load_dotenv("backend/.env")
+load_dotenv()
 
 # Server configs
 SERVER_HOST, SERVER_PORT  = os.getenv('SERVER_ADDRESS', "0.0.0.0:8080").split(":")[0], int(os.getenv('SERVER_ADDRESS', "0.0.0.0:8080").split(":")[1])
