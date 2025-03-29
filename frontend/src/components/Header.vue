@@ -68,11 +68,11 @@
           <button
             class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700"
             @click="
-              $router.push('/events/create');
+              $router.push('/auth/client');
               toggleMenu();
             "
           >
-            + Создать событие
+            Войти
           </button>
         </nav>
       </div>
