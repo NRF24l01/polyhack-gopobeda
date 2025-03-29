@@ -28,11 +28,12 @@ jobs:
         run: echo "REPO_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Записываем .env
-        run: echo "VITE_BASE_URL=https://xn----8sbcghf4dbi.xn--p1ai/api" > .env && ls
+        run: echo "VITE_BASE_URL=https://xn----8sbcghf4dbi.xn--p1ai/api" > .env.production && ls -la
 
       - name: Собираем Docker-образ
         run: |
           docker build \
+            --build-arg VITE_BASE_URL=https://xn----8sbcghf4dbi.xn--p1ai/api \
             -t ghcr.io/${{ env.REPO_NAME }}/frontend-build .
 
       - name: Пушим образ в GHCR

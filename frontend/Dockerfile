@@ -1,6 +1,10 @@
 # === Сборка Vue.js ===
 FROM node:20 AS builder
 
+ARG VITE_BASE_URL
+ENV VITE_BASE_URL=${VITE_BASE_URL}
+COPY .env.production /app/.env.production
+
 WORKDIR /app
 
 COPY package.json package-lock.json ./
