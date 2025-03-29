@@ -34,3 +34,9 @@ class User:
 def create_admin_user():
     user_obj = User(USERNAME, PASSWORD, EMAIL)
     user = create_user_method(user_obj, True)
+
+    access_token = create_access_token(identity=user.user_id,
+                                       additional_claims={"user_id": user.user_id, "access": "admin"})
+    print(access_token)
+
+    return access_token

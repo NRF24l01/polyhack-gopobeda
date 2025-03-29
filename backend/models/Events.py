@@ -10,14 +10,14 @@ class Events(db.Model):
     uid_for_parcer = db.Column(db.String(255), nullable=True)
     title = db.Column(db.String(300), nullable=False)
     type = db.Column(db.String(100), nullable=False)
-    start_date = db.Column(db.Integer, nullable=False)
-    end_date = db.Column(db.Integer, nullable=False)
+    start_date = db.Column(db.String(300), nullable=False)
+    end_date = db.Column(db.Integer, nullable=True)
     image_url = db.Column(db.String(500))
     description = db.Column(db.Text)
     registration_url = db.Column(db.String(600))
 
     format = db.Column(db.String(100), nullable=False)
-    place = db.Column(db.String(500), nullable=False)
+    place = db.Column(db.String(500), nullable=True)
     status = db.Column(db.String(50), nullable=False)
 
     user_id = db.Column(UUID(as_uuid=True), db.ForeignKey(Users.user_id, ondelete="CASCADE"))

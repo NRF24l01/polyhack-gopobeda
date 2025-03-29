@@ -76,8 +76,33 @@ def create_events_method(body, user_id):
     if body.place is not None:
         new_event.place = body.place
 
-    db.add(new_event)
-    db.commit()
+    db.session.add(new_event)
+    db.session.commit()
+
+    return new_event.as_dict()
+
+
+def create_events_from_json(json, user_id):
+    new_event = Events(
+        title=json['title'],
+        type=json['type'],
+        start_date=json['start_date'],
+        image_url=json['image_url'],
+        description=json['description'],
+        registration_url=json['registration_url'],
+        format=json['format'],
+        status="published",
+        user_id=user_id
+    )
+    print(json)
+
+    if 'place' in json:
+        new_event.place = json['place']
+    if "uid" in json:
+        new_event.uid = json['uid']
+
+    db.session.add(new_event)
+    db.session.commit()
 
     return new_event.as_dict()
 
