@@ -33,79 +33,26 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div
+      <EventCard
         v-for="event in filteredEvents"
         :key="event.id"
-        class="bg-white rounded-lg shadow overflow-hidden cursor-pointer hover:shadow-lg transition-shadow flex flex-col"
-        @click="$router.push(`/events/${event.id}`)"
-      >
-        <img
-          :src="event.image"
-          :alt="event.title"
-          class="w-full h-48 object-cover"
-        />
-        <div class="p-4 flex flex-col flex-grow">
-          <div class="flex justify-between items-start mb-2">
-            <span
-              class="inline-block px-2 py-1 text-sm text-purple-600 bg-purple-100 rounded-md"
-            >
-              {{ event.type }}
-            </span>
-            <button 
-              @click.stop="toggleFavorite(event)"
-              class="transition-transform hover:scale-110"
-              :class="{ 'text-red-500': isFavorite(event.id) }"
-            >
-              <SolidHeartIcon v-if="isFavorite(event.id)" class="w-6 h-6 text-red-500" />
-              <OutlineHeartIcon v-else class="w-6 h-6 text-gray-400" />
-            </button>
-          </div>
-          <h3 class="text-xl font-semibold mb-2">{{ event.title }}</h3>
-          <p class="text-gray-600 mb-4 line-clamp-2">{{ event.description }}</p>
-
-          <div class="mt-auto">
-            <div class="flex items-center text-sm text-gray-500 mb-2">
-              <CalendarIcon class="w-5 h-5 mr-2" />
-              {{ event.date }}
-            </div>
-            <div class="flex items-center text-sm text-gray-500 mb-2">
-              <MapPinIcon class="w-5 h-5 mr-2" />
-              {{ event.location }}
-            </div>
-            <div class="flex items-center text-sm text-gray-500">
-              <UserIcon class="w-5 h-5 mr-2" />
-              {{ event.organizer }}
-            </div>
-            <button 
-              class="w-full mt-4 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700"
-              @click.stop="$router.push(`/events/${event.id}`)"
-            >
-              Подробнее
-            </button>
-          </div>
-        </div>
-      </div>
+        :event="event"
+        :favorite="isFavorite(event.id)"
+        @card-click="$router.push(`/events/${event.id}`)"
+        @toggle-favorite="toggleFavorite(event)"
+      />
     </div>
   </div>
 </template>
 
-<script setup>
-import { HeartIcon as SolidHeartIcon } from "@heroicons/vue/24/solid";
-import { HeartIcon as OutlineHeartIcon } from "@heroicons/vue/24/outline";
-</script>
-
 <script>
-import { CalendarIcon, MapPinIcon, UserIcon } from "@heroicons/vue/24/solid";
+import EventCard from "@/components/EventCard.vue";
 import { favoritesMixin } from "@/mixins/favoritesMixin";
 
 export default {
   name: "EventsList",
   components: {
-    SolidHeartIcon,
-    OutlineHeartIcon,
-    CalendarIcon,
-    MapPinIcon,
-    UserIcon,
+    EventCard,
   },
   mixins: [favoritesMixin],
   data() {
@@ -124,33 +71,39 @@ export default {
           id: 1,
           type: "Хакатон",
           title: "Цифровой Прорыв 2023",
-          description: "Всероссийский хакатон для IT-специалистов, дизайнеров и управленцев в цифровой сфере",
+          description:
+            "Всероссийский хакатон для IT-специалистов, дизайнеров и управленцев в цифровой сфере",
           date: "10-12 ноября 2023",
           location: "Москва",
           organizer: "Россия - страна возможностей",
-          image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
+          image:
+            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
         },
         {
           id: 2,
           type: "Геймджем",
           title: "Ludum Dare 54",
-          description: "Всемирный онлайн-геймджем, где участники создают игру с нуля за 48 или 72 часа",
+          description:
+            "Всемирный онлайн-геймджем, где участники создают игру с нуля за 48 или 72 часа",
           date: "15-18 октября 2023",
           location: "Онлайн",
           organizer: "Ludum Dare Community",
-          image: "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
+          image:
+            "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
         },
         {
           id: 3,
           type: "Олимпиада",
           title: "Всероссийская олимпиада по программированию",
-          description: "Ежегодная олимпиада для школьников и студентов, проверяющая навыки в алгоритмическом программировании",
+          description:
+            "Ежегодная олимпиада для школьников и студентов, проверяющая навыки в алгоритмическом программировании",
           date: "1-5 декабря 2023",
           location: "Санкт-Петербург",
           organizer: "Министерство образования РФ",
-          image: "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80"
-        }
-      ]
+          image:
+            "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
+        },
+      ],
     };
   },
   computed: {
