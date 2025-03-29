@@ -6,6 +6,7 @@ from flask_jwt_extended import JWTManager, create_access_token
 from flask_cors import CORS
 from datetime import timedelta
 from  methods import create_user_method
+from models import Users
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -40,3 +41,7 @@ def create_admin_user():
     print(access_token)
 
     return access_token
+
+with app.app_context():
+    if not db.session.query(Users).filter_by(email=EMAIL).first():
+        jwt = create_admin_user()

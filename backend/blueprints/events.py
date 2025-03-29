@@ -19,7 +19,6 @@ def get_events(query: QueryRequest):
 
 @events.route("/{events_id}", methods=['GET'])
 @creates_response
-@validate()
 def get_events_by_event_id(events_id):
     event = get_event_by_event_id(events_id)
 
