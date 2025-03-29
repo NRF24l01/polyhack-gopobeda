@@ -69,7 +69,7 @@
         <div class="flex flex-wrap gap-4">
           <button
             class="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
-            @click="window.location.href = '{{ event.registration_url }}'"
+            @click="redirectToRegistration"
           >
             Принять участие
           </button>
@@ -120,7 +120,13 @@ export default {
     this.fetchEvent()
   },
   methods: {
-    
+    redirectToRegistration() {
+      if (this.event && this.event.registration_url) {
+        window.location.href = this.event.registration_url;
+      } else {
+        console.error("Registration URL is undefined.");
+      }
+    },
     convertUnixTimestamp(timestamp) {
         return new Date(timestamp * 1000).toLocaleString("en-GB", {
             timeZone: "Etc/GMT-3",
