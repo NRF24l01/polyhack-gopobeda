@@ -10,30 +10,8 @@
         </div>
         
         <nav class="hidden md:flex space-x-8">
-          <router-link 
-            to="/" 
-            class="text-gray-700 hover:text-gray-900"
-          >
-            Главная
-          </router-link>
-          <router-link 
-            to="/favorites" 
-            class="text-gray-700 hover:text-gray-900 flex items-center"
-          >
-            <span class="mr-1">❤️</span>
-            Избранное
-          </router-link>
-          <router-link 
-            v-for="(link, index) in navLinks" 
-            :key="index"
-            :to="link.path"
-            class="text-gray-700 hover:text-gray-900"
-            active-class="text-purple-600"
-          >
-            {{ link.title }}
-          </router-link>
+          <router-link v-for="(link, index) in navLinks" :key="index" :to="link.path" class="text-gray-700 hover:text-gray-900"active-class="text-purple-600" v-html="link.title" />
         </nav>
-
         <button 
           class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700"
           @click="$router.push('/events/create')"
@@ -52,6 +30,7 @@ export default {
     return {
       navLinks: [
         { title: 'Главная', path: '/' },
+        { title: '<span class="mr-1">❤️</span>Избранное', path: '/favorite' },
         { title: 'События', path: '/events' },
         { title: 'О нас', path: '/about' }
       ]
