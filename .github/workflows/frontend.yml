@@ -28,7 +28,7 @@ jobs:
         run: echo "REPO_NAME=$(echo '${{ github.repository }}' | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
 
       - name: Записываем .env
-        run: echo "VITE_BASE_URL=https://xn----8sbcghf4dbi.xn--p1ai/api" > .env
+        run: echo "VITE_BASE_URL=https://xn----8sbcghf4dbi.xn--p1ai/api" > .env && ls
 
       - name: Собираем Docker-образ
         run: |
