@@ -51,7 +51,11 @@
             >
               {{ event.type }}
             </span>
-            <button @click="toggleFavorite">
+            <button 
+              @click.stop="toggleFavorite(event)"
+              class="transition-transform hover:scale-110"
+              :class="{ 'text-red-500': isFavorite(event.id) }"
+            >
               <SolidHeartIcon v-if="isFavorite(event.id)" class="w-6 h-6 text-red-500" />
               <OutlineHeartIcon v-else class="w-6 h-6 text-gray-400" />
             </button>
