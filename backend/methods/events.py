@@ -72,6 +72,9 @@ def create_events_method(body):
         status="draft"
     )
 
+    if body.place is not None:
+        new_event.place = body.place
+
     db.add(new_event)
     db.commit()
 

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, HttpUrl, Field
-from typing import Literal
+from typing import Literal, Optional
 
 
 class CreateEventsRequest(BaseModel):
@@ -11,4 +11,6 @@ class CreateEventsRequest(BaseModel):
     description: str = Field(...)
     registration_url: HttpUrl = Field(...)
     format: Literal["online", "offline", "hybrid"] = Field(...)
+    place: Optional[str] = None
+
 
