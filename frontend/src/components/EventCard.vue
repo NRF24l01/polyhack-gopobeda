@@ -3,7 +3,11 @@
     class="bg-white rounded-lg shadow overflow-hidden cursor-pointer hover:shadow-lg transition-shadow flex flex-col"
     @click="handleCardClick"
   >
-    <img :src="event.image_url" :alt="event.title" class="w-full h-48 object-cover" />
+    <img
+      :src="event.image_url"
+      :alt="event.title"
+      class="w-full h-48 object-cover"
+    />
     <div class="p-4 flex flex-col flex-grow">
       <div class="flex justify-between items-start mb-2">
         <span
@@ -31,15 +35,17 @@
       <div class="mt-auto">
         <div class="flex items-center text-sm text-gray-500 mb-2">
           <CalendarIcon class="w-5 h-5 mr-2" />
-          {{ event.date }}
+          {{ convertUnixTimestamp(parseInt(event.start_date)) }} - {{ convertUnixTimestamp(event.end_date) }}
         </div>
-        <div class="flex items-center text-sm text-gray-500 mb-2">
+        <div
+          class="flex items-center text-sm text-gray-500 mb-2">
           <MapPinIcon class="w-5 h-5 mr-2" />
-          {{ event.location }}
+          <div v-if="event.format != 'online'">{{ event.location }}</div>
+          <div v-else>Онлайн</div>
         </div>
         <div class="flex items-center text-sm text-gray-500">
           <UserIcon class="w-5 h-5 mr-2" />
-          {{ event.organizer }}
+          {{ event.organizer.username }}
         </div>
         <button
           class="w-full mt-4 bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700"
@@ -53,7 +59,7 @@
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from 'vue';
+import { defineProps, defineEmits } from "vue";
 import { HeartIcon as SolidHeartIcon } from "@heroicons/vue/24/solid";
 import { HeartIcon as OutlineHeartIcon } from "@heroicons/vue/24/outline";
 import { CalendarIcon, MapPinIcon, UserIcon } from "@heroicons/vue/24/solid";
@@ -69,14 +75,14 @@ const props = defineProps({
   },
 });
 
-const emits = defineEmits(['card-click', 'toggle-favorite']);
+const emits = defineEmits(["card-click", "toggle-favorite"]);
 
 function handleCardClick() {
-  emits('card-click');
+  emits("card-click");
 }
 
 function handleToggleFavorite() {
-  emits('toggle-favorite');
+  emits("toggle-favorite");
 }
 </script>
 
@@ -89,6 +95,12 @@ export default {
     }
   },
   methods: {
+    convertUnixTimestamp(timestamp) {
+        return new Date(timestamp * 1000).toLocaleString("en-GB", {
+            timeZone: "Etc/GMT-3",
+            hour12: false
+        });
+    },
     eventColor(type) {
       switch (type) {
         case 'Геймджем':
