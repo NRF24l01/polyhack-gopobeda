@@ -17,14 +17,6 @@ def get_events(query: QueryRequest):
     return jsonify(events), 200
 
 
-@events.route("/{events_id}", methods=['GET'])
-@creates_response
-def get_events_by_event_id(events_id):
-    event = get_event_by_event_id(events_id)
-
-    return jsonify(event.as_dict()), 200
-
-
 @events.route("", methods=['POST'])
 @creates_response
 @jwt_required()
@@ -36,6 +28,14 @@ def create_events(body: CreateEventsRequest):
     events = create_events_method(body, user_id)
 
     return jsonify(events), 201
+
+
+@events.route("/<events_id>", methods=['GET'])
+@creates_response
+def get_events_by_event_id(events_id):
+    event = get_event_by_event_id(events_id)
+
+    return jsonify(event.as_dict()), 200
 
 
 @events.route("/pull/from/json", methods=['POST'])
