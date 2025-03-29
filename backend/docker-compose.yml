@@ -34,7 +34,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - app-data:/app
+    - ./app_image:/usr/src/app
     networks:
       - flask-net
 
