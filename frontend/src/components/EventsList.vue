@@ -61,23 +61,10 @@ export default {
       selectedCategory: '',
       categories: ['Хакатоны', 'Геймджемы', 'Конкурсы', 'Олимпиады', 'Конференции'],
       events: [],
+      filteredEvents: [],
       loading: false,
       error: null
     }
-  },
-  computed: {
-    filteredEvents() {
-      return this.events.filter((event) => {
-        const matchesSearch =
-          event.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-          event.description
-            .toLowerCase()
-            .includes(this.searchQuery.toLowerCase());
-        const matchesCategory =
-          !this.selectedCategory || event.type === this.selectedCategory;
-        return matchesSearch && matchesCategory;
-      });
-    },
   },
   methods: {
     selectCategory(category) {
@@ -107,7 +94,18 @@ export default {
         }
 
         const data = await response.json()
-        this.events = data.items
+        this.events = data
+        console.log(data)
+        this.filteredEvents = this.events.filter((event) => {
+          const matchesSearch =
+            event.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
+            event.description
+              .toLowerCase()
+              .includes(this.searchQuery.toLowerCase());
+          const matchesCategory =
+            !this.selectedCategory || event.type === this.selectedCategory;
+          return matchesSearch && matchesCategory;
+        });
       } catch (error) {
         this.error = error.message
         console.error('Ошибка:', error)
