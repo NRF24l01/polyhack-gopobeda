@@ -54,6 +54,14 @@ export default {
   components: {
     EventCard,
   },
+  watch: {
+    searchQuery() {
+      this.fetchEvents();
+    },
+    selectedCategory() {
+      this.fetchEvents();
+    }
+  },
   mixins: [favoritesMixin],
   data() {
     return {
