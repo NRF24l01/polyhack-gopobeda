@@ -9,4 +9,4 @@ class QueryRequest(BaseModel):
     date_to: Optional[int] = None
     offset: Optional[int] = Field(0, ge=0)
     limit: Optional[int] = Field(10, ge=0)
-
+    status: Optional[int] = None
