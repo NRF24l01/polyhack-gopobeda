@@ -17,6 +17,15 @@ def get_events(query: QueryRequest):
     return jsonify(events), 200
 
 
+@events.route("/{events_id}", methods=['GET'])
+@creates_response
+@validate()
+def get_events_by_event_id(events_id):
+    event = get_event_by_event_id(events_id)
+
+    return jsonify(event.as_dict()), 200
+
+
 @events.route("", methods=['POST'])
 @creates_response
 @jwt_required()

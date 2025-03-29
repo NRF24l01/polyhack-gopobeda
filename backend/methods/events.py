@@ -85,7 +85,7 @@ def create_events_method(body, user_id):
 def create_events_from_json(json, user_id):
     new_event = Events(
         title=json['title'],
-        type=json['type'],
+        type="Хакатон",
         start_date=json['start_date'],
         image_url=json['image_url'],
         description=json['description'],
