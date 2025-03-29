@@ -42,8 +42,7 @@ const routes = [
     },
     {
         path: '/events/:id',
-        component: EventDetails,
-        props: true
+        component: EventDetails
     },
     {
         path: '/favorites',

@@ -99,6 +99,8 @@
 
 <script>
 import { favoritesMixin } from '@/mixins/favoritesMixin'
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 
 export default {
   name: 'EventDetails',
@@ -112,7 +114,7 @@ export default {
   data() {
     return {
       event: null,
-      loading: true
+      loading: true,
     }
   },
   created() {
@@ -120,30 +122,31 @@ export default {
   },
   methods: {
     fetchEvent() {
-      // Имитация загрузки данных
-      setTimeout(() => {
-        this.event = {
-          id: this.id,
-          type: "Хакатон",
-          title: "Цифровой Прорыв 2023",
-          description: `Всероссийский хакатон для IT-специалистов, дизайнеров и управленцев в цифровой сфере.
+      const rid = useRoute().params.id
+      this.loading = true
+      this.error = null
 
-Вас ждут:
-• Интересные задачи от ведущих компаний
-• Призовой фонд
-• Возможность найти команду
-• Менторская поддержка
-• Нетворкинг с профессионалами отрасли
+      try {
+        const response = fetch(`${import.meta.env.VITE_BASE_URL}/events/${rid}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
 
-Регистрация команд до 5 ноября 2023.`,
-          date: "10-12 ноября 2023",
-          location: "Москва",
-          organizer: "Россия - страна возможностей",
-          image: "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-          website: "https://example.com"
+        if (!response.ok) {
+          throw new Error('Ошибка при загрузке событий')
         }
+
+        const data = response.json()
+        this.event = data
+        console.log(data)
+      } catch (error) {
+        this.error = error.message
+        console.error('Ошибка:', error)
+      } finally {
         this.loading = false
-      }, 500)
+      }
     },
     shareEvent() {
       if (navigator.share) {
