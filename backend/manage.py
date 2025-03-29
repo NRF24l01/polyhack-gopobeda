@@ -9,7 +9,7 @@ from  methods import create_user_method
 from models import Users
 
 app = Flask(__name__)
-CORS(app, supports_credentials=True)
+CORS(app, supports_credentials=True, origins=['*'])
 
 # Configs
 app.config["SECRET_KEY"] = RANDOM_SECRET
