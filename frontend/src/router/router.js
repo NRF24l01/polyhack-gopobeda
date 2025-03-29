@@ -7,6 +7,8 @@ import regOrg from "@/pages/regOrg.vue";
 import createEvent from "@/pages/createEvent.vue";
 import EventDetails from "@/pages/EventDetails.vue";
 import FavoriteEvents from "@/pages/FavoriteEvents.vue";
+import notFound from "@/pages/notFound.vue";
+import about from "@/pages/about.vue";
 
 const routes = [
     {
@@ -41,6 +43,14 @@ const routes = [
     {
         path: '/favorites',
         component: FavoriteEvents
+    },
+    {
+        path: '/about',
+        component: about
+    },
+    {
+        path: '/:pathMatch(.*)*',
+        component: notFound
     }
 ]
 

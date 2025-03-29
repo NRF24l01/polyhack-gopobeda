@@ -15,7 +15,7 @@ python3 -m flask db upgrade
 if [ "$APP_DEBUG" == "1" ]; then
         python3 app.py
 else
-        gunicorn -w 8 -b 0.0.0.0:8080 wsgi:app
+        gunicorn -w 4 -b 0.0.0.0:8080 wsgi:app
 fi
 
 exec "$@"
