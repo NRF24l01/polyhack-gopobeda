@@ -57,54 +57,13 @@ export default {
   mixins: [favoritesMixin],
   data() {
     return {
-      searchQuery: "",
-      selectedCategory: "",
-      categories: [
-        "Хакатоны",
-        "Геймджемы",
-        "Конкурсы",
-        "Олимпиады",
-        "Конференции",
-      ],
-      events: [
-        {
-          id: 1,
-          type: "Хакатон",
-          title: "Цифровой Прорыв 2023",
-          description:
-            "Всероссийский хакатон для IT-специалистов, дизайнеров и управленцев в цифровой сфере",
-          date: "10-12 ноября 2023",
-          location: "Москва",
-          organizer: "Россия - страна возможностей",
-          image:
-            "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-        },
-        {
-          id: 2,
-          type: "Геймджем",
-          title: "Ludum Dare 54",
-          description:
-            "Всемирный онлайн-геймджем, где участники создают игру с нуля за 48 или 72 часа",
-          date: "15-18 октября 2023",
-          location: "Онлайн",
-          organizer: "Ludum Dare Community",
-          image:
-            "https://images.unsplash.com/photo-1552820728-8b83bb6b773f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-        },
-        {
-          id: 3,
-          type: "Олимпиада",
-          title: "Всероссийская олимпиада по программированию",
-          description:
-            "Ежегодная олимпиада для школьников и студентов, проверяющая навыки в алгоритмическом программировании",
-          date: "1-5 декабря 2023",
-          location: "Санкт-Петербург",
-          organizer: "Министерство образования РФ",
-          image:
-            "https://images.unsplash.com/photo-1517694712202-14dd9538aa97?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80",
-        },
-      ],
-    };
+      searchQuery: '',
+      selectedCategory: '',
+      categories: ['Хакатоны', 'Геймджемы', 'Конкурсы', 'Олимпиады', 'Конференции'],
+      events: [],
+      loading: false,
+      error: null
+    }
   },
   computed: {
     filteredEvents() {
@@ -122,11 +81,45 @@ export default {
   },
   methods: {
     selectCategory(category) {
-      this.selectedCategory =
-        this.selectedCategory === category ? "" : category;
+      this.selectedCategory = this.selectedCategory === category ? '' : category
     },
+    formatDate(timestamp) {
+      return new Date(timestamp * 1000).toLocaleDateString('ru-RU', {
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      })
+    },
+    async fetchEvents() {
+      this.loading = true
+      this.error = null
+
+      try {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/events`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+
+        if (!response.ok) {
+          throw new Error('Ошибка при загрузке событий')
+        }
+
+        const data = await response.json()
+        this.events = data.items
+      } catch (error) {
+        this.error = error.message
+        console.error('Ошибка:', error)
+      } finally {
+        this.loading = false
+      }
+    }
   },
-};
+  created() {
+    this.fetchEvents()
+  }
+}
 </script>
 
 <style scoped>
@@ -136,4 +129,4 @@ export default {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-</style>
+</style> 

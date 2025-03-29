@@ -54,7 +54,7 @@ export default {
       if (!this.validateForm()) return;
 
       try {
-        const response = await fetch('http://127.0.0.1:8080/auth/register/organizer', {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/register/organizer`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
@@ -62,7 +62,9 @@ export default {
           body: JSON.stringify(this.regOrg)
         });
         const data = await response.json();
+        localStorage.setItem('token', data.jwt);
         console.log('Registration successful:', data);
+        console.log(localStorage.getItem("token"));
       } catch (error) {
         console.error('Error during registration:', error);
       }

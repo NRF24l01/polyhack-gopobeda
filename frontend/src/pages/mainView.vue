@@ -1,5 +1,6 @@
 <script setup>
-import NewIvent from '../components/NewIvent.vue';
+import NewIvent from '@/components/NewIvent.vue';
+import EventsList from '@/components/EventsList.vue';
 </script>
 
 <template>
