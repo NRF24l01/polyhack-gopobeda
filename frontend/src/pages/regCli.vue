@@ -23,12 +23,32 @@
 
       <button @click="register" class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition">Зарегистрироваться</button>
 
-      <p class="text-center text-gray-600 mt-4">Есть аккаунт? <span @click="$router.push('/auth/client')" class="text-blue-500 hover:text-blue-600 cursor-pointer">Зарегистрироваться</span></p>
+      <p class="text-center text-gray-600 mt-4">Есть аккаунт? <span @click="$router.push('/auth/client')" class="text-blue-500 hover:text-blue-600 cursor-pointer">Войти</span></p>
     </div>
   </div>
 </template>
 
 <script>
+import { jwtDecode } from "jwt-decode"; // Correct import for ES module
+
+export function decodeJwt(token) {
+  try {
+    return jwtDecode(token);
+  } catch (error) {
+    console.error("Invalid JWT", error);
+    return null;
+  }
+}
+
+export function getCustomClaims(token) {
+  const decoded = decodeJwt(token);
+  return decoded;
+}
+
+const token = localStorage.getItem("token")
+console.log(token)
+console.log(getCustomClaims(token))
+
 export default {
   data() {
     return {
