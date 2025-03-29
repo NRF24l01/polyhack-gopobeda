@@ -69,6 +69,7 @@
         <div class="flex flex-wrap gap-4">
           <button
             class="px-6 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors"
+            @click="window.location.href = '{{ event.registration_url }}'"
           >
             Принять участие
           </button>
@@ -119,6 +120,7 @@ export default {
     this.fetchEvent()
   },
   methods: {
+    
     convertUnixTimestamp(timestamp) {
         return new Date(timestamp * 1000).toLocaleString("en-GB", {
             timeZone: "Etc/GMT-3",
