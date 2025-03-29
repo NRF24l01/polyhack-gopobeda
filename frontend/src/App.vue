@@ -7,11 +7,9 @@ import Footer from "./components/Footer.vue";
   <div class="min-h-screen flex flex-col">
     <Header />
     <main class="flex-grow">
-      <router-view v-slot="{ Component }">
-        <transition>
-          <component :is="Component" />
-        </transition>
-      </router-view>
+      <transition name="fade" mode="out-in">
+         <router-view :key="$route.fullPath" />
+       </transition>
     </main>
     <Footer />
   </div>
