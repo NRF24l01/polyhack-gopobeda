@@ -5,8 +5,8 @@ from typing import Literal, Optional
 class CreateEventsRequest(BaseModel):
     title: str = Field(..., min_length=1)
     type: Literal["hackathon", "meetup", "conference", "workshop"] = Field(...)
-    start_date: int = Field(...)
-    end_date: int = None
+    start_date: str = Field(...)
+    end_date: str = None
     image: str = Field(...)
     description: str = Field(...)
     registration_url: str = Field(...)

@@ -24,6 +24,7 @@ def get_events(query: QueryRequest):
 @validate()
 def create_events(body: CreateEventsRequest):
     user_id = get_jwt_identity()
+    print(body)
     events = create_events_method(body, user_id)
 
     return jsonify(events), 201

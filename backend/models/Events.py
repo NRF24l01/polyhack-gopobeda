@@ -11,7 +11,7 @@ class Events(db.Model):
     title = db.Column(db.String(300), nullable=False)
     type = db.Column(db.String(100), nullable=False)
     start_date = db.Column(db.String(300), nullable=False)
-    end_date = db.Column(db.Integer, nullable=True)
+    end_date = db.Column(db.String(300), nullable=True)
     image_url = db.Column(db.String(500))
     description = db.Column(db.Text)
     registration_url = db.Column(db.String(600))
