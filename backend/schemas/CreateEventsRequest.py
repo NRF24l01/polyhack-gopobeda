@@ -9,7 +9,7 @@ class CreateEventsRequest(BaseModel):
     end_date: int = None
     image: str = Field(...)
     description: str = Field(...)
-    registration_url: HttpUrl = Field(...)
+    registration_url: str = Field(...)
     format: Literal["online", "offline", "hybrid"] = Field(...)
     place: Optional[str] = None
 
