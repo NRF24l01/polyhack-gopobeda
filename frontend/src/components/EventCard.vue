@@ -3,7 +3,7 @@
     class="bg-white rounded-lg shadow overflow-hidden cursor-pointer hover:shadow-lg transition-shadow flex flex-col"
     @click="handleCardClick"
   >
-    <img :src="event.image" :alt="event.title" class="w-full h-48 object-cover" />
+    <img :src="event.image_url" :alt="event.title" class="w-full h-48 object-cover" />
     <div class="p-4 flex flex-col flex-grow">
       <div class="flex justify-between items-start mb-2">
         <span

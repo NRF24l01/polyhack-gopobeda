@@ -35,3 +35,4 @@ if __name__ == "__main__":
             jwt = create_admin_user()
 
     app.run(host=SERVER_HOST, port=SERVER_PORT, debug=True)
+
