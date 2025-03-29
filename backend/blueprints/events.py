@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request
 from schemas import *
 from methods import *
 from helpers import *
@@ -25,5 +25,17 @@ def get_events(query: QueryRequest):
 def create_events(body: CreateEventsRequest):
     user_id = get_jwt_identity()
     events = create_events_method(body, user_id)
+
+    return jsonify(events), 201
+
+
+@events.route("/pull/from/json", methods=['POST'])
+@creates_response
+@jwt_required()
+@is_admin
+def pull_db_from_json():
+    body = request.get_json()
+    user_id = get_jwt_identity()
+    events = create_events_from_json(body, user_id)
 
     return jsonify(events), 201

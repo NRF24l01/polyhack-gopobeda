@@ -23,6 +23,6 @@ APP_DEBUG = bool(int(os.getenv('APP_DEBUG', 0)))
 USERNAME = os.getenv('USERNAME')
 EMAIL = os.getenv('EMAIL')
 PASSWORD = os.getenv('PASSWORD')
-
+jwt = os.getenv('jwt')
 
 UPLOADFLOADER = "images"

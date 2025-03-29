@@ -50,9 +50,10 @@ class HackatonsParser(BaseParser):
             referrer = "https://www.xn--80aa3anexr8c.xn--p1acf/"
 
             response = requests.get(url, headers=headers, params=params)
-            print(response.json()['posts'][0])  # Если ответ в JSON-формате
+            print(response.json()['posts'][1])  # Если ответ в JSON-формате
             events = []
             for post in response.json()['posts']:
+                uid = post['uid']
                 title = post['title']
                 description = post['descr']
                 image_url = post['image']
@@ -66,6 +67,7 @@ class HackatonsParser(BaseParser):
                 type = "hacatons"
                 if place is not None:
                     events.append({
+                            "uid": uid,
                             "title": title,
                             "type": type,
                             "start_date": start_date,
