@@ -57,7 +57,7 @@ def get_events_methods(query):
     return events
 
 
-def create_events_method(body):
+def create_events_method(body, user_id):
     link = base64_to_link(body.image)
 
     new_event = Events(
@@ -69,7 +69,8 @@ def create_events_method(body):
         description=body.description,
         registration_url=body.registration_url,
         format=body.format,
-        status="draft"
+        status="draft",
+        user_id=user_id
     )
 
     if body.place is not None:
