@@ -9,6 +9,7 @@ import EventDetails from "@/pages/EventDetails.vue";
 import FavoriteEvents from "@/pages/FavoriteEvents.vue";
 import notFound from "@/pages/notFound.vue";
 import about from "@/pages/about.vue";
+import events from "../pages/events.vue";
 
 const routes = [
     {
@@ -30,6 +31,10 @@ const routes = [
     {
         path: '/registration/Client',
         component: regCli
+    },
+    {
+        path: '/events',
+        component: events
     },
     {
         path: '/events/create',
