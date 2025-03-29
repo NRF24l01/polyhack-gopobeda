@@ -88,9 +88,11 @@
               v-model="form.registration_url"
               type="url"
               required
+              pattern="https?://.*"
               placeholder="https://..."
               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
+            <p class="text-sm text-gray-500 mt-1">Введите полный URL, начиная с http:// или https://</p>
           </div>
 
           <div>
@@ -98,11 +100,20 @@
             <input 
               type="file"
               @change="handleImageUpload"
-              accept="image/*"
+              accept="image/jpeg,image/png,image/gif"
               required
               class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
             />
-            <p class="text-sm text-gray-500 mt-1">Рекомендуемый размер: 1200x630px</p>
+            <p class="text-sm text-gray-500 mt-1">
+              Поддерживаемые форматы: JPG, PNG, GIF. Максимальный размер: 5MB
+            </p>
+            <div v-if="imagePreview" class="mt-2">
+              <img 
+                :src="imagePreview" 
+                alt="Preview" 
+                class="h-32 object-cover rounded-md"
+              />
+            </div>
           </div>
 
           <div v-if="error" class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-md">
@@ -147,25 +158,77 @@ export default {
         registration_url: '',
         image: null
       },
+      imagePreview: null,
       loading: false,
       error: null
     }
   },
   methods: {
+    // Возвращаем полный base64 без изменений
+    async fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => {
+          resolve(reader.result)  // Возвращаем полный результат без изменений
+        }
+        reader.onerror = error => reject(error)
+      })
+    },
+
     handleImageUpload(event) {
       const file = event.target.files[0]
       if (file) {
+        // Проверяем размер файла (например, максимум 5MB)
+        const maxSize = 5 * 1024 * 1024 // 5MB в байтах
+        if (file.size > maxSize) {
+          this.error = 'Размер файла не должен превышать 5MB'
+          event.target.value = '' // Очищаем input
+          this.imagePreview = null
+          return
+        }
+
+        // Проверяем тип файла
+        const allowedTypes = ['image/jpeg', 'image/png', 'image/gif']
+        if (!allowedTypes.includes(file.type)) {
+          this.error = 'Пожалуйста, загрузите изображение в формате JPG, PNG или GIF'
+          event.target.value = ''
+          this.imagePreview = null
+          return
+        }
+
+        // Создаем URL для предпросмотра
+        this.imagePreview = window.URL.createObjectURL(file)
         this.form.image = file
+        this.error = null
       }
     },
+
     dateToTimestamp(dateString) {
-      return Math.floor(new Date(dateString).getTime() / 1000)
+      return Math.floor(new Date(dateString).getTime() / 1000).toString()
     },
+
+    // Добавляем метод валидации URL
+    isValidUrl(string) {
+      try {
+        new URL(string)
+        return true
+      } catch (_) {
+        return false
+      }
+    },
+
     async createEvent() {
       this.loading = true
       this.error = null
 
       try {
+        // Конвертируем изображение в base64
+        let imageBase64 = null
+        if (this.form.image) {
+          imageBase64 = await this.fileToBase64(this.form.image)
+        }
+
         // Создаем объект с данными
         const eventData = {
           title: this.form.title,
@@ -174,12 +237,13 @@ export default {
           end_date: this.dateToTimestamp(this.form.end_date),
           type: this.form.type,
           format: this.form.format,
-          image: this.form.image,
-          registration_url: this.form.registration_url
+          registration_url: this.form.registration_url,
+          image: imageBase64, // Отправляем полный base64 с префиксом
+          place: this.form.format === 'online' ? null : this.form.location
         }
         console.log(eventData)
 
-        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/events`, {
+        const response = await fetch('http://127.0.0.1:8080/events', {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -188,35 +252,34 @@ export default {
           body: JSON.stringify(eventData)
         })
 
+        const responseText = await response.text()
+        console.log('Ответ сервера:', responseText)
+
         if (!response.ok) {
-          const errorData = await response.json()
-          throw new Error(errorData.message || 'Ошибка при создании мероприятия')
+          let errorMessage
+          try {
+            const errorData = JSON.parse(responseText)
+            errorMessage = errorData.message || 'Неизвестная ошибка'
+          } catch (e) {
+            errorMessage = responseText || 'Ошибка при создании мероприятия'
+          }
+          throw new Error(`Ошибка ${response.status}: ${errorMessage}`)
         }
 
-        const data = await response.json()
-        
-        // Если нужно отправить изображение отдельно
-        if (this.form.image) {
-          const imageFormData = new FormData()
-          imageFormData.append('image', this.form.image)
-          
-          await fetch(`http://127.0.0.1:8080/events/${data.event_id}/image`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`
-            },
-            body: imageFormData
-          })
-        }
-
-        // Перенаправляем на страницу созданного мероприятия
+        const data = JSON.parse(responseText)
         this.$router.push(`/events/${data.event_id}`)
       } catch (error) {
         this.error = error.message
-        console.error('Ошибка:', error)
+        console.error('Подробности ошибки:', error)
       } finally {
         this.loading = false
       }
+    }
+  },
+  // Очищаем URL при уничтожении компонента
+  beforeUnmount() {
+    if (this.imagePreview) {
+      window.URL.revokeObjectURL(this.imagePreview)
     }
   }
 }
