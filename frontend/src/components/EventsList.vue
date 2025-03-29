@@ -37,8 +37,8 @@
         v-for="event in filteredEvents"
         :key="event.id"
         :event="event"
-        :favorite="isFavorite(event.id)"
-        @card-click="$router.push(`/events/${event.id}`)"
+        :favorite="isFavorite(event.event_id)"
+        @card-click="$router.push(`/events/${event.event_id}`)"
         @toggle-favorite="toggleFavorite(event)"
       />
     </div>
