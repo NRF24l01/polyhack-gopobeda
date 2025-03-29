@@ -6,7 +6,10 @@
     <img :src="event.image" :alt="event.title" class="w-full h-48 object-cover" />
     <div class="p-4 flex flex-col flex-grow">
       <div class="flex justify-between items-start mb-2">
-        <span class="inline-block px-2 py-1 text-sm text-purple-600 bg-purple-100 rounded-md">
+        <span
+          class="inline-block px-2 py-1 text-sm rounded-md font-medium"
+          :class="eventColor(event.type)"
+        >
           {{ event.type }}
         </span>
         <button
@@ -15,11 +18,9 @@
           :class="{ 'text-red-500': favorite }"
         >
           <template v-if="favorite">
-            <!-- Assuming you want to use the solid heart icon -->
             <SolidHeartIcon class="w-6 h-6 text-red-500" />
           </template>
           <template v-else>
-            <!-- Outline heart icon -->
             <OutlineHeartIcon class="w-6 h-6 text-gray-400" />
           </template>
         </button>
@@ -77,6 +78,35 @@ function handleCardClick() {
 function handleToggleFavorite() {
   emits('toggle-favorite');
 }
+</script>
+
+<script>
+export default {
+  props: {
+    event: {
+      type: String,
+      required: true
+    }
+  },
+  methods: {
+    eventColor(type) {
+      switch (type) {
+        case 'Геймджем':
+          return 'bg-fuchsia-500/10 text-fuchsia-500';
+        case 'Хакатон':
+          return 'bg-purple-500/10 text-purple-500';
+        case 'Конкурс':
+          return 'bg-orange-500/10 text-orange-500';
+        case 'Олимпиада':
+          return 'bg-sky-500/10 text-sky-500';
+        case 'Конференция':
+          return 'bg-emerald-500/10 text-white-500';
+        default:
+          return 'bg-gray-200/10 text-gray-800'; // Цвет по умолчанию
+      }
+    }
+  }
+};
 </script>
 
 <style scoped>
