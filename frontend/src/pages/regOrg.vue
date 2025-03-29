@@ -62,7 +62,9 @@ export default {
           body: JSON.stringify(this.regOrg)
         });
         const data = await response.json();
+        localStorage.setItem('token', data.jwt);
         console.log('Registration successful:', data);
+        console.log(localStorage.getItem("token"));
       } catch (error) {
         console.error('Error during registration:', error);
       }
