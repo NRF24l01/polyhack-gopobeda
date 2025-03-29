@@ -61,10 +61,10 @@
                 required
                 class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-purple-500 focus:border-transparent"
               >
-                <option value="hackathon">Хакатон</option>
-                <option value="meetup">Митап</option>
-                <option value="conference">Конференция</option>
-                <option value="workshop">Воркшоп</option>
+                <option value="Хакатон">Хакатон</option>
+                <option value="Митап">Митап</option>
+                <option value="Конференция">Конференция</option>
+                <option value="Воркшоп">Воркшоп</option>
               </select>
             </div>
 
@@ -153,7 +153,7 @@ export default {
         description: '',
         start_date: '',
         end_date: '',
-        type: 'hackathon',
+        type: 'Хакатон',
         format: 'online',
         registration_url: '',
         image: null

@@ -67,7 +67,7 @@ export default {
     return {
       searchQuery: '',
       selectedCategory: '',
-      categories: ['Хакатоны', 'Геймджемы', 'Конкурсы', 'Олимпиады', 'Конференции'],
+      categories: ['Хакатон', 'Геймджем', 'Конкурс', 'Олимпиад', 'Конференция'],
       events: [],
       filteredEvents: [],
       loading: false,
