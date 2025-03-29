@@ -65,7 +65,7 @@ def create_events_method(body, user_id):
         type=body.type,
         start_date=body.start_date,
         end_date=body.end_date,
-        image=link,
+        image_url=link,
         description=body.description,
         registration_url=body.registration_url,
         format=body.format,
