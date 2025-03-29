@@ -5,14 +5,31 @@ from .exeptions import IncorrectData
 from flask_jwt_extended.exceptions import JWTDecodeError
 import jwt
 
+def get_first_error(e):
+    errors = []
+
+    if e.form_params:
+        errors += e.form_params
+
+    if e.query_params:
+        errors += e.query_params
+
+    if e.body_params:
+        errors += e.body_params
+
+    if e.path_params:
+        errors += e.path_params
+
+    error = errors[0]
+    return f"{error['msg']}: {error['loc']}"
 
 def creates_response(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except ValidationError as e:
-            print(e.errors())
-            return jsonify({"error": "Validation error", "details": e.errors()}), 400
+            print(get_first_error(e))
+            return jsonify({"error": "Validation error", "details": get_first_error(e)}), 400
         except ValueError as e:
             return jsonify({"Validation error": f"{str(e)}"}), 400
         except BadRequest as e:

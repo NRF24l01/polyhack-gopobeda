@@ -7,6 +7,7 @@ class Events(db.Model):
     __tablename__ = 'events'
 
     event_id = db.Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4, unique=True, nullable=False)
+    uid_for_parcer = db.Column(db.String(255), nullable=True)
     title = db.Column(db.String(300), nullable=False)
     type = db.Column(db.String(100), nullable=False)
     start_date = db.Column(db.Integer, nullable=False)

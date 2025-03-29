@@ -19,4 +19,10 @@ POSTGRES_CONN = f"postgresql://{POSTGRES_USERNAME}:{POSTGRES_PASSWORD}@{POSTGRES
 # Debug config
 APP_DEBUG = bool(int(os.getenv('APP_DEBUG', 0)))
 
+# User data
+USERNAME = os.getenv('USERNAME')
+EMAIL = os.getenv('EMAIL')
+PASSWORD = os.getenv('PASSWORD')
+
+
 UPLOADFLOADER = "images"
