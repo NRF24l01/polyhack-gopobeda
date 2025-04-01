@@ -243,7 +243,7 @@ export default {
         }
         console.log(eventData)
 
-        const response = await fetch('http://127.0.0.1:8080/events', {
+        const response = await fetch(`${import.meta.env.VITE_BASE_URL}/events`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('token')}`,
