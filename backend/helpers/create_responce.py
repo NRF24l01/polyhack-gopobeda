@@ -20,39 +20,42 @@ def get_first_error(e):
     if e.path_params:
         errors += e.path_params
 
-    error = errors[0]
-    return f"{error['msg']}: {error['loc']}"
+    if errors:
+        error = errors[0]
+        return f"{error['msg']}: {'.'.join(map(str, error['loc']))}"  # loc - указывает на поле ошибки
+    return "Unknown validation error"
 
 def creates_response(func):
     def wrapper(*args, **kwargs):
         try:
             return func(*args, **kwargs)
         except ValidationError as e:
-            print(get_first_error(e))
-            return jsonify({"error": "Validation error", "details": get_first_error(e)}), 400
+            error_msg = get_first_error(e)
+            print(error_msg)
+            return jsonify({"error": "Validation error", "details": error_msg}), 400
         except ValueError as e:
-            return jsonify({"Validation error": f"{str(e)}"}), 400
-        except BadRequest as e:
-            return jsonify({"reason": "cant parse request"}), 400
-        except Forbidden as e:
-            return jsonify({"reason": "not access"}), 403
-        except NotFound as e:
-            return jsonify({"reason": "object not found"}), 404
-        except Conflict as e:
-            return jsonify({"reason": "conflict"}), 409
-        except IncorrectData as e:
-            return jsonify({"reason": "incorrect data"}), 401
-        except JWTDecodeError as e:
-            return jsonify({"reason": "Incorrect token"}), 403
+            return jsonify({"error": "Invalid input", "details": str(e)}), 400
+        except BadRequest:
+            return jsonify({"error": "Bad request", "reason": "cant parse request"}), 400
+        except Forbidden:
+            return jsonify({"error": "Forbidden", "reason": "not access"}), 403
+        except NotFound:
+            return jsonify({"error": "Not found", "reason": "object not found"}), 404
+        except Conflict:
+            return jsonify({"error": "Conflict", "reason": "conflict"}), 409
+        except IncorrectData:
+            return jsonify({"error": "Unauthorized", "reason": "incorrect data"}), 401
+        except JWTDecodeError:
+            return jsonify({"error": "Forbidden", "reason": "Incorrect token"}), 403
         except jwt.exceptions.InvalidSignatureError:
-            return jsonify({"reason": "Signature verification failed"}), 401
+            return jsonify({"error": "Unauthorized", "reason": "Signature verification failed"}), 401
         except jwt.ExpiredSignatureError:
-            return jsonify({"error": "Token expired"}), 401
+            return jsonify({"error": "Unauthorized", "reason": "Token expired"}), 401
         except jwt.InvalidTokenError:
-            return jsonify({"error": "Invalid token"}), 422
+            return jsonify({"error": "Unprocessable entity", "reason": "Invalid token"}), 422
         except Exception as e:
             print(e)
-            return jsonify({"reason": "server error "+str(e)}), 500
+            return jsonify({"error": "Internal server error", "reason": str(e)}), 500
 
     wrapper.__name__ = func.__name__
     return wrapper
