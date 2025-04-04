@@ -22,6 +22,10 @@
       </div>
 
       <button @click="register" class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition">Зарегистрироваться</button>
+      
+      <div class="mb-4" v-if="serverError">
+        <p class="text-red-500 text-center mt-3">{{ serverError }}</p>
+      </div>
 
       <p class="text-center text-gray-600 mt-4">Есть аккаунт? <span @click="$router.push('/auth/Organisation')" class="text-blue-500 hover:text-blue-600 cursor-pointer">Войти</span></p>
     </div>
@@ -39,7 +43,9 @@ export default {
       },
       emailError: '',
       loginError: '',
-      passwordError: ''
+      passwordError: '',
+      serverError: '',
+      loading: false
     };
   },
   methods: {
@@ -87,7 +93,7 @@ export default {
         localStorage.setItem('token', data.jwt);
         console.log('Registration successful:', data);
         console.log(localStorage.getItem("token"));
-        $router.push('/')
+        this.$router.push('/');
       } catch (error) {
         console.error('Error during registration:', error);
       }

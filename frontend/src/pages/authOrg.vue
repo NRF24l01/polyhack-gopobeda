@@ -87,10 +87,10 @@ export default {
           return;
         }
 
-        console.log('Registration successful:', data);
-        $router.push('/')
+        console.log('AUTH successful:', data);
+        this.$router.push('/');
       } catch (error) {
-        console.error('Error during registration:', error);
+        console.error('Error during authorithation:', error);
         this.serverError = 'Ошибка сервера, попробуйте позже.';
       } finally {
         this.loading = false;
