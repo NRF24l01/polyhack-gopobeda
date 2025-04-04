@@ -19,18 +19,22 @@ const routes = [
   {
     path: "/auth/Client",
     component: authCli,
+    meta: { noonAuth: true },
   },
   {
     path: "/auth/Organisation",
     component: authOrg,
+    meta: { noonAuth: true },
   },
   {
     path: "/registration/Organisation",
     component: regOrg,
+    meta: { noonAuth: true },
   },
   {
     path: "/registration/Client",
     component: regCli,
+    meta: { noonAuth: true },
   },
   {
     path: "/events",
@@ -85,32 +89,41 @@ router.beforeEach((to, from, next) => {
   }
 
   function getCustomClaims(token) {
-    const decoded = decodeJwt(token);
-    return decoded;
+    return decodeJwt(token);
   }
 
-    const token = localStorage.getItem("token");
-    if (!to.meta.requiresAuth) {
-      console.log('NO AUTH')
-    next();
+  const token = localStorage.getItem("token");
+  if (token && to.meta.noonAuth) {
+    if (from.path && ["/auth/Client", "/auth/Organisation", "/registration/Client", "/registration/Organisation"].includes(from.path)) {
+      next("/");
+    } else {
+      next(from.path || "/");
+    }
+    return;
   }
-  if (!token && !to.meta.requiresAuth) {
-    next("/auth/client");
-  } else if (!token && to.meta.requireAdmin) {
+
+  if (!token && to.meta.requiresAuth) {
+    next("/auth/Client");
+    return;
+  }
+
+  if (!token && to.meta.requireAdmin) {
     next("/auth/Organisation");
+    return;
   }
+
   const data = getCustomClaims(token);
-
-  console.log(data);
-  console.log(data.access);
-
-  if (!data.access && to.meta.requiresAuth && data.access == "organizer") {
-    next("/auth/client");
-  } else if (data.access != "organizer" && to.meta.requireAdmin) {
-    next("/auth/organisation");
-  } else {
-    next();
+  if (data && to.meta.requiresAuth && data.access !== "organizer") {
+    next("/auth/Client");
+    return;
   }
+
+  if (data && to.meta.requireAdmin && data.access !== "organizer") {
+    next("/auth/Organisation");
+    return;
+  }
+
+  next();
 });
 
 export default router;
