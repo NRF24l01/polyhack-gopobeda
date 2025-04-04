@@ -87,6 +87,9 @@ export default {
           return;
         }
 
+        localStorage.setItem('token', data.jwt);
+        console.log('Registration successful:', data);
+        console.log(localStorage.getItem("token"));
         console.log('AUTH successful:', data);
         this.$router.push('/');
       } catch (error) {

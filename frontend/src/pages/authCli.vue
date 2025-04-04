@@ -15,6 +15,8 @@
         <p v-if="passwordError" class="text-red-500 text-sm mt-1">{{ passwordError }}</p>
       </div>
 
+      <p v-if="serverError" class="text-red-500 text-center mt-3">{{ serverError }}</p>
+
       <button @click="register" class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition">Войти</button>
 
       <p class="text-center text-gray-600 mt-4">Нет аккаунта? <span @click="$router.push('/registration/client')" class="text-blue-500 hover:text-blue-600 cursor-pointer">Зарегистрироваться</span></p>
@@ -26,24 +28,30 @@
 export default {
   data() {
     return {
-      authCli: {
+      authOrg: {
         email: '',
         password: '',
       },
       emailError: '',
       loginError: '',
-      passwordError: ''
+      passwordError: '',
+      serverError: '',
+      loading: false
     };
   },
   methods: {
     validateForm() {
-      this.emailError = this.authCli.email.includes('@') ? '' : 'Введите корректный email';
-      this.passwordError = this.authCli.password.length >= 6 ? '' : 'Пароль должен содержать минимум 6 символов';
+      const usernamePattern = /^.{1,50}$/;
+      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,60}$/;
 
-      return !this.emailError && !this.loginError && !this.passwordError;
+      this.usernameError = usernamePattern.test(this.authOrg.username) ? '' : 'Имя пользователя должно содержать от 1 до 50 символов';
+      this.passwordError = passwordPattern.test(this.authOrg.password) 
+        ? '' 
+        : 'Пароль должен содержать от 8 до 60 символов, включая хотя бы одну заглавную букву, одну строчную и одну цифру';
+
+      return !this.usernameError && !this.passwordError;
     },
     async register() {
-      
       try {
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/login`, {
           method: 'POST',
@@ -53,6 +61,23 @@ export default {
           body: JSON.stringify(this.authCli)
         });
         const data = await response.json();
+
+        if (!response.ok) {
+          if (data.details) {
+            this.serverError = data.details;
+          } else if (data.reason) {
+            this.serverError = data.reason;
+          } else if (data.error) {
+            this.serverError = data.error;
+          } else {
+            this.serverError = "Неизвестная ошибка";
+          }
+          return;
+        }
+        
+        localStorage.setItem('token', data.jwt);
+        console.log('Registration successful:', data);
+        console.log(localStorage.getItem("token"));
         console.log('Registration successful:', data);
       } catch (error) {
         console.error('Error during registration:', error);
