@@ -67,13 +67,16 @@ export default {
   methods: {
     validateForm() {
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const usernamePattern = /^.{2,50}$/;
       const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
-      this.emailError = emailPattern.test(this.regCli.email) ? '' : 'Введите корректный email';
-      this.loginError = this.regCli.username.trim() ? '' : 'Логин не может быть пустым';
+      this.emailError = this.regCli.email.length >= 8 && this.regCli.email.length <= 120 && emailPattern.test(this.regCli.email) 
+        ? '' 
+        : 'Введите корректный email (от 8 до 120 символов)';
       this.passwordError = passwordPattern.test(this.regCli.password) 
         ? '' 
-        : 'Пароль должен содержать минимум 6 символов, включая букву и цифру';
+        : 'Пароль должен содержать от 8 до 60 символов, включая хотя бы одну заглавную букву, одну строчную и одну цифру';
+      this.usernameError = usernamePattern.test(this.regCli.username) ? '' : 'Имя пользователя должно содержать от 1 до 50 символов';
 
       return !this.emailError && !this.loginError && !this.passwordError;
     },
