@@ -102,7 +102,7 @@ router.beforeEach((to, from, next) => {
     return;
   }
 
-  if (!token && to.meta.requiresAuth) {
+  if (!token && to.meta.requiresAuth && !to.meta.requireAdmin) {
     next("/auth/Client");
     return;
   }
