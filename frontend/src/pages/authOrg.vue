@@ -5,17 +5,27 @@
 
       <div class="mb-4">
         <label class="block text-gray-500 text-sm mb-1">Email</label>
-        <input v-model="authOrg.email" type="email" :class="{'border-red-500': emailError}" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Введите ваш email" />
+        <input v-model="authOrg.email" type="email" 
+               :class="{'border-red-500': emailError}" 
+               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" 
+               placeholder="Введите ваш email" />
         <p v-if="emailError" class="text-red-500 text-sm mt-1">{{ emailError }}</p>
       </div>
 
       <div class="mb-4">
         <label class="block text-gray-500 text-sm mb-1">Password</label>
-        <input v-model="authOrg.password" type="password" :class="{'border-red-500': passwordError}" class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" placeholder="Введите ваш пароль" />
+        <input v-model="authOrg.password" type="password" 
+               :class="{'border-red-500': passwordError}" 
+               class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400" 
+               placeholder="Введите ваш пароль" />
         <p v-if="passwordError" class="text-red-500 text-sm mt-1">{{ passwordError }}</p>
       </div>
 
-      <button @click="register" class="w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition">Войти</button>
+      <div class="mb-4" v-if="serverError">
+        <p class="text-red-500 text-center mt-3">{{ serverError }}</p>
+      </div>
+
+      <button @click="register" class="mt-4 w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition">Войти</button>
 
       <p class="text-center text-gray-600 mt-4">Нет аккаунта? <span @click="$router.push('/registration/Organisation')" class="text-blue-500 hover:text-blue-600 cursor-pointer">Зарегистрироваться</span></p>
     </div>
@@ -32,15 +42,22 @@ export default {
       },
       emailError: '',
       loginError: '',
-      passwordError: ''
+      passwordError: '',
+      serverError: '',
+      loading: false
     };
   },
   methods: {
     validateForm() {
-      this.emailError = this.authOrg.email.includes('@') ? '' : 'Введите корректный email';
-      this.passwordError = this.authOrg.password.length >= 6 ? '' : 'Пароль должен содержать минимум 6 символов';
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
 
-      return !this.emailError && !this.loginError && !this.passwordError;
+      this.emailError = emailPattern.test(this.authOrg.email) ? '' : 'Введите корректный email';
+      this.passwordError = passwordPattern.test(this.authOrg.password) 
+        ? '' 
+        : 'Пароль должен содержать минимум 6 символов, включая букву и цифру';
+
+      return !this.emailError && !this.passwordError;
     },
     async register() {
       if (!this.validateForm()) return;
@@ -54,9 +71,27 @@ export default {
           body: JSON.stringify(this.authOrg)
         });
         const data = await response.json();
+
+        if (!response.ok) {
+          // Обрабатываем формат ответа с бэка
+          if (data.details) {
+            this.serverError = data.details;
+          } else if (data.reason) {
+            this.serverError = data.reason;
+          } else if (data.error) {
+            this.serverError = data.error;
+          } else {
+            this.serverError = "Неизвестная ошибка";
+          }
+          return;
+        }
+
         console.log('Registration successful:', data);
       } catch (error) {
         console.error('Error during registration:', error);
+        this.serverError = 'Ошибка сервера, попробуйте позже.';
+      } finally {
+        this.loading = false;
       }
     }
   }
