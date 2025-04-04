@@ -70,6 +70,20 @@ export default {
           body: JSON.stringify(this.regOrg)
         });
         const data = await response.json();
+
+        if (!response.ok) {
+          if (data.details) {
+            this.serverError = data.details;
+          } else if (data.reason) {
+            this.serverError = data.reason;
+          } else if (data.error) {
+            this.serverError = data.error;
+          } else {
+            this.serverError = "Неизвестная ошибка";
+          }
+          return;
+        }
+
         localStorage.setItem('token', data.jwt);
         console.log('Registration successful:', data);
         console.log(localStorage.getItem("token"));
