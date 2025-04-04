@@ -28,12 +28,11 @@
 export default {
   data() {
     return {
-      authOrg: {
+      authCli: {
         email: '',
         password: '',
       },
       emailError: '',
-      loginError: '',
       passwordError: '',
       serverError: '',
       loading: false
@@ -41,17 +40,21 @@ export default {
   },
   methods: {
     validateForm() {
-      const usernamePattern = /^.{1,50}$/;
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,60}$/;
 
-      this.usernameError = usernamePattern.test(this.authOrg.username) ? '' : 'Имя пользователя должно содержать от 1 до 50 символов';
-      this.passwordError = passwordPattern.test(this.authOrg.password) 
+      this.emailError = this.authCli.email.length >= 8 && this.authCli.email.length <= 120 && emailPattern.test(this.authCli.email) 
+        ? '' 
+        : 'Введите корректный email (от 8 до 120 символов)';
+      this.passwordError = passwordPattern.test(this.authCli.password) 
         ? '' 
         : 'Пароль должен содержать от 8 до 60 символов, включая хотя бы одну заглавную букву, одну строчную и одну цифру';
 
-      return !this.usernameError && !this.passwordError;
+      return !this.emailError && !this.passwordError;
     },
     async register() {
+      if (!this.validateForm()) return;
+
       try {
         const response = await fetch(`${import.meta.env.VITE_BASE_URL}/auth/login`, {
           method: 'POST',
@@ -76,11 +79,12 @@ export default {
         }
         
         localStorage.setItem('token', data.jwt);
-        console.log('Registration successful:', data);
+        console.log('auth successful:', data);
         console.log(localStorage.getItem("token"));
-        console.log('Registration successful:', data);
+        console.log('auth successful:', data);
+        this.$router.push('/');
       } catch (error) {
-        console.error('Error during registration:', error);
+        console.error('Error during auth:', error);
       }
     }
   }
