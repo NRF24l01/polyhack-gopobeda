@@ -21,7 +21,7 @@ def drop_db():
     for table in reversed(db.metadata.sorted_tables):
         db.session.query(table).delete()
     db.session.commit()
-    return jsonify({"message": "Destroyed"})
+    return jsonify({"details": "Destroyed"})
 
 
 @app.route('/images/<filename>')

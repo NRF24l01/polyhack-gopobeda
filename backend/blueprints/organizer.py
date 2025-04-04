@@ -58,4 +58,4 @@ def moderate_event(event_id):
 
     db.session.commit()
 
-    return jsonify({"message": "send to moderate"}), 200
+    return jsonify({"details": "send to moderate"}), 200

@@ -52,7 +52,7 @@ def like_for_event(event_id):
 
     db.session.commit()
 
-    return jsonify({"message": "ok"}), 200
+    return jsonify({"details": "ok"}), 200
 
 
 @user.route("/events/{event_id}/participating", methods=['POST'])
@@ -69,4 +69,4 @@ def participating_for_event(event_id):
 
     db.session.commit()
 
-    return jsonify({"message": "ok"}), 200
+    return jsonify({"details": "ok"}), 200

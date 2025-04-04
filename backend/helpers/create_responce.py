@@ -42,7 +42,7 @@ def creates_response(func):
         except NotFound:
             return jsonify({"error": "Not found", "reason": "object not found"}), 404
         except Conflict:
-            return jsonify({"error": "Conflict", "reason": "conflict"}), 409
+            return jsonify({"error": "Conflict", "reason": "Conflict, we have such records already."}), 409
         except IncorrectData:
             return jsonify({"error": "Unauthorized", "reason": "We don't have such a record."}), 401
         except JWTDecodeError:

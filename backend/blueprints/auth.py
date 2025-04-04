@@ -22,7 +22,7 @@ def login():
     user = get_user_by_email(login_field)
 
     if not user or not check_password_hash(user.password_hash, password):
-        return jsonify({'message': 'Неверный логин или пароль'}), 401
+        return jsonify({'reason': 'Неверный логин или пароль'}), 401
 
     if user.is_organizer:
         access = "organizer"
