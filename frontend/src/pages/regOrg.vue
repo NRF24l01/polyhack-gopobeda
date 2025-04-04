@@ -44,9 +44,17 @@ export default {
   },
   methods: {
     validateForm() {
-      this.emailError = this.regOrg.email.includes('@') ? '' : 'Введите корректный email';
-      this.loginError = this.regOrg.username.trim() ? '' : 'Логин не может быть пустым';
-      this.passwordError = this.regOrg.password.length >= 6 ? '' : 'Пароль должен содержать минимум 6 символов';
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const usernamePattern = /^.{1,50}$/;
+      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,60}$/;
+      
+      this.emailError = this.regOrg.email.length >= 8 && this.regOrg.email.length <= 120 && emailPattern.test(this.regOrg.email) 
+        ? '' 
+        : 'Введите корректный email (от 8 до 120 символов)';
+      this.passwordError = passwordPattern.test(this.regOrg.password) 
+        ? '' 
+        : 'Пароль должен содержать от 8 до 60 символов, включая хотя бы одну заглавную букву, одну строчную и одну цифру';
+      this.usernameError = usernamePattern.test(this.regOrg.username) ? '' : 'Имя пользователя должно содержать от 1 до 50 символов';
 
       return !this.emailError && !this.loginError && !this.passwordError;
     },
@@ -65,6 +73,7 @@ export default {
         localStorage.setItem('token', data.jwt);
         console.log('Registration successful:', data);
         console.log(localStorage.getItem("token"));
+        $router.push('/')
       } catch (error) {
         console.error('Error during registration:', error);
       }
