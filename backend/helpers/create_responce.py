@@ -44,7 +44,7 @@ def creates_response(func):
         except Conflict:
             return jsonify({"error": "Conflict", "reason": "conflict"}), 409
         except IncorrectData:
-            return jsonify({"error": "Unauthorized", "reason": "incorrect data"}), 401
+            return jsonify({"error": "Unauthorized", "reason": "We don't have such a record."}), 401
         except JWTDecodeError:
             return jsonify({"error": "Forbidden", "reason": "Incorrect token"}), 403
         except jwt.exceptions.InvalidSignatureError:
