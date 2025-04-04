@@ -21,11 +21,11 @@
         <p v-if="passwordError" class="text-red-500 text-sm mt-1">{{ passwordError }}</p>
       </div>
 
+      <button @click="register" class="mt-4 w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition">Войти</button>
+      
       <div class="mb-4" v-if="serverError">
         <p class="text-red-500 text-center mt-3">{{ serverError }}</p>
       </div>
-
-      <button @click="register" class="mt-4 w-full bg-blue-500 text-white p-3 rounded-lg hover:bg-blue-600 transition">Войти</button>
 
       <p class="text-center text-gray-600 mt-4">Нет аккаунта? <span @click="$router.push('/registration/Organisation')" class="text-blue-500 hover:text-blue-600 cursor-pointer">Зарегистрироваться</span></p>
     </div>
@@ -50,12 +50,14 @@ export default {
   methods: {
     validateForm() {
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,60}$/;
 
-      this.emailError = emailPattern.test(this.authOrg.email) ? '' : 'Введите корректный email';
+      this.emailError = this.authOrg.email.length >= 8 && this.authOrg.email.length <= 120 && emailPattern.test(this.authOrg.email) 
+        ? '' 
+        : 'Введите корректный email (от 8 до 120 символов)';
       this.passwordError = passwordPattern.test(this.authOrg.password) 
         ? '' 
-        : 'Пароль должен содержать минимум 6 символов, включая букву и цифру';
+        : 'Пароль должен содержать от 8 до 60 символов, включая хотя бы одну заглавную букву, одну строчную и одну цифру';
 
       return !this.emailError && !this.passwordError;
     },
@@ -73,7 +75,6 @@ export default {
         const data = await response.json();
 
         if (!response.ok) {
-          // Обрабатываем формат ответа с бэка
           if (data.details) {
             this.serverError = data.details;
           } else if (data.reason) {
@@ -87,6 +88,7 @@ export default {
         }
 
         console.log('Registration successful:', data);
+        $router.push('/')
       } catch (error) {
         console.error('Error during registration:', error);
         this.serverError = 'Ошибка сервера, попробуйте позже.';
